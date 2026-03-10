@@ -1,0 +1,143 @@
+﻿Build1=Default,b4a.OrderTakerTest1
+File1=addOrderActivity.bal
+File2=bggg.jpg
+File3=forgotPass.bal
+File4=loginTest1.db
+File5=main.bal
+File6=OrderTakerDashboard.bal
+File7=userorders.bal
+FileGroup1=Default Group
+FileGroup2=Default Group
+FileGroup3=Default Group
+FileGroup4=Default Group
+FileGroup5=Default Group
+FileGroup6=Default Group
+FileGroup7=Default Group
+Group=Default Group
+Library1=core
+Library2=okhttputils2
+Library3=reflection
+Library4=sql
+Library5=xcustomlistview
+Library6=xui
+Library7=json
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~SetApplicationAttribute(android:usesCleartextTraffic, "true")~\n~AddPermission(android.permission.INTERNET)~\n~AddPermission(android.permission.ACCESS_NETWORK_STATE)~\n~'End of default text.~\n~
+Module1=addOrderActivity
+Module2=Controls
+Module3=forgotPass
+Module4=OrderTakerDashboard
+Module5=Starter
+Module6=userOrders
+NumberOfFiles=7
+NumberOfLibraries=7
+NumberOfModules=6
+Version=13.4
+@EndOfDesignText@
+#Region  Project Attributes 
+    #ApplicationLabel: Order Taker Test 1
+    #VersionCode: 1
+    #VersionName: 1.0
+    #SupportedOrientations: portrait
+    #CanInstallToExternalStorage: False
+#End Region
+
+#Region  Activity Attributes 
+    #FullScreen: False
+    #IncludeTitle: False
+#End Region
+
+Sub Process_Globals
+	Private xui As XUI
+	Public SQLLogin As SQL       ' login DB
+	Public SQLProducts As SQL    ' products/orders DB
+	Public LoggedInUser As String
+	' API Configuration
+	Public API_URL As String = "http://192.168.8.225/ordertaker_api/fetching_items_test1.php"
+	Public ITEMS_LAST_SYNC As Long = 0
+End Sub
+
+Sub Globals
+	Private Label1 As Label
+	Private bttnLogin As Button
+	Private Label2 As Label
+	Private etuser As EditText
+	Private etpassword As EditText
+	Private lbluser As Label
+	Private lblpass As Label
+	Private lblforgot As Label
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	Activity.LoadLayout("main")
+
+	' --- LOGIN DB ---
+	If FirstTime Then
+		If File.Exists(File.DirInternal, "loginTest1.db") = False Then
+			File.Copy(File.DirAssets, "loginTest1.db", File.DirInternal, "loginTest1.db")
+		End If
+		SQLLogin.Initialize(File.DirInternal, "loginTest1.db", True)
+	End If
+
+	' --- PRODUCTS/ORDERS DB ---
+	
+	SQLProducts.Initialize(File.DirInternal, "productsTest1.db", True)
+
+	' Create items cache table
+	SQLProducts.ExecNonQuery("CREATE TABLE IF NOT EXISTS items (" & _
+    "item_id INTEGER PRIMARY KEY, " & _
+    "item_code TEXT, " & _
+    "item_name TEXT, " & _
+    "unit_price REAL, " & _
+    "barcode TEXT, " & _
+    "vendor_id INTEGER, " & _
+    "is_active INTEGER)")
+	
+	
+	
+	etpassword.PasswordMode = True
+	
+	
+
+End Sub
+
+Sub Activity_Resume
+End Sub
+
+Sub Activity_Pause(UserClosed As Boolean)
+End Sub
+
+Private Sub bttnLogin_Click
+	Dim username As String = etuser.Text.Trim
+	Dim password As String = etpassword.Text.Trim
+
+	If username = "" Then
+		etuser.RequestFocus
+		ToastMessageShow("Please enter your username", False)
+		Return
+	End If
+
+	If password = "" Then
+		etpassword.RequestFocus
+		ToastMessageShow("Please enter your password", False)
+		Return
+	End If
+
+	Dim Cursor1 As Cursor
+	Cursor1 = SQLLogin.ExecQuery2("SELECT * FROM user WHERE username = ? AND password = ?", Array As String(username, password))
+
+	If Cursor1.RowCount > 0 Then
+		ToastMessageShow("Login Successful!", False)
+		LoggedInUser = username
+		StartActivity(OrderTakerDashboard)
+		Controls.SetAnimation("slide_left_in", "slide_left_out")
+		Activity.Finish
+	Else
+		ToastMessageShow("Invalid username or password", False)
+	End If
+	Cursor1.Close
+End Sub
+
+Private Sub lblforgot_Click
+	StartActivity(forgotPass)
+	Controls.SetAnimation("slide_up_in", "slide_up_out")
+End Sub
