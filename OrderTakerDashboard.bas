@@ -71,28 +71,75 @@ Sub Activity_Pause(UserClosed As Boolean)
 End Sub
 
 ' Creates orders/order_items tables if they don't exist
-' Also safely adds multi-vendor columns (safe to run multiple times)
 Private Sub SetupOrdersDatabaseTables
-	Main.SQLProducts.ExecNonQuery("CREATE TABLE IF NOT EXISTS orders (" & _
+	Main.SQLProducts.ExecNonQuery( _
+        "CREATE TABLE IF NOT EXISTS orders (" & _
         "order_id INTEGER PRIMARY KEY AUTOINCREMENT, " & _
-        "vendor_id INTEGER, user_id INTEGER, date_created TEXT, status TEXT, total_amount REAL)")
-	Main.SQLProducts.ExecNonQuery("CREATE TABLE IF NOT EXISTS order_items (" & _
+        "vendor_id INTEGER, " & _
+        "user_id INTEGER, " & _
+        "date_created TEXT, " & _
+        "status TEXT, " & _
+        "total_amount REAL)")
+        
+	Main.SQLProducts.ExecNonQuery( _
+        "CREATE TABLE IF NOT EXISTS order_items (" & _
         "order_item_id INTEGER PRIMARY KEY AUTOINCREMENT, " & _
-        "order_id INTEGER, product_id INTEGER, quantity INTEGER, price REAL)")
+        "order_id INTEGER, " & _
+        "product_id INTEGER, " & _
+        "quantity INTEGER, " & _
+        "price REAL)")
+
+	EnsureLocalSchema
+End Sub
+
+' Safe schema migration: add only missing columns one by one
+Sub EnsureLocalSchema
+	If Main.SQLProducts.IsInitialized = False Then
+		Log("EnsureLocalSchema skipped: SQLProducts not initialized")
+		Return
+	End If
+
+	' orders table
+	AddColumnIfMissing("orders", "user_id", "INTEGER DEFAULT 0")
+	AddColumnIfMissing("orders", "vendor_id", "INTEGER DEFAULT 0")
+	AddColumnIfMissing("orders", "sync_status", "TEXT DEFAULT 'Holding'")
+	AddColumnIfMissing("orders", "synced_at", "INTEGER DEFAULT 0")
+	AddColumnIfMissing("orders", "transaction_number", "TEXT")
+	AddColumnIfMissing("orders", "device_id", "TEXT")
+
+	' order_items table
+	AddColumnIfMissing("order_items", "fulfillment_status", "TEXT DEFAULT ''")
+	AddColumnIfMissing("order_items", "payment_status", "TEXT DEFAULT ''")
+	AddColumnIfMissing("order_items", "delivery_status", "TEXT DEFAULT ''")
+End Sub
+
+Sub AddColumnIfMissing(TableName As String, ColumnName As String, ColumnDef As String)
+	If HasColumn(TableName, ColumnName) Then Return
 
 	Try
-		Main.SQLProducts.ExecNonQuery("ALTER TABLE orders ADD COLUMN user_id INTEGER DEFAULT 0")
-		Main.SQLProducts.ExecNonQuery("ALTER TABLE orders ADD COLUMN transaction_number TEXT")
-		Main.SQLProducts.ExecNonQuery("ALTER TABLE orders ADD COLUMN device_id TEXT")
-		Main.SQLProducts.ExecNonQuery("ALTER TABLE orders ADD COLUMN sync_status TEXT DEFAULT 'Holding'")
-		Main.SQLProducts.ExecNonQuery("ALTER TABLE orders ADD COLUMN synced_at INTEGER DEFAULT 0")
-
-		Main.SQLProducts.ExecNonQuery("ALTER TABLE order_items ADD COLUMN fulfillment_status TEXT DEFAULT 'Paid-Received'")
-		Main.SQLProducts.ExecNonQuery("ALTER TABLE order_items ADD COLUMN payment_status TEXT DEFAULT 'Paid'")
-		Main.SQLProducts.ExecNonQuery("ALTER TABLE order_items ADD COLUMN delivery_status TEXT DEFAULT 'Received'")
-		Log("Database schema ready for multi-vendor + user tracking")
+		Main.SQLProducts.ExecNonQuery("ALTER TABLE " & TableName & " ADD COLUMN " & ColumnName & " " & ColumnDef)
+		Log("Added column: " & TableName & "." & ColumnName)
 	Catch
-		Log("Database columns already exist (OK): " & LastException.Message)
+		Log("AddColumnIfMissing error on " & TableName & "." & ColumnName & ": " & LastException.Message)
+	End Try
+End Sub
+
+Sub HasColumn(TableName As String, ColumnName As String) As Boolean
+	Dim rs As ResultSet
+	Try
+		rs = Main.SQLProducts.ExecQuery("PRAGMA table_info(" & TableName & ")")
+		Do While rs.NextRow
+			If rs.GetString("name").ToLowerCase = ColumnName.ToLowerCase Then
+				rs.Close
+				Return True
+			End If
+		Loop
+		rs.Close
+		Return False
+	Catch
+		If rs.IsInitialized Then rs.Close
+		Log("HasColumn error on " & TableName & "." & ColumnName & ": " & LastException.Message)
+		Return False
 	End Try
 End Sub
 
@@ -100,9 +147,7 @@ End Sub
 ' BOTTOM NAVIGATION
 ' ======================
 
-' Hides all panels and shows only the selected one, then highlights its tab
 Private Sub ShowPanel(panelToShow As Panel)
-	' Hide all content panels first
 	pnlContentDash.Visible = False
 	pnlContentOrders.Visible = False
 	pnlContentInventory.Visible = False
@@ -110,7 +155,6 @@ Private Sub ShowPanel(panelToShow As Panel)
 
 	panelToShow.Visible = True
 
-	' Reset all nav tabs to gray (inactive)
 	Dim inactiveColor As Int = Colors.RGB(158, 158, 158)
 	lblDashIcon.TextColor = inactiveColor
 	lblDash.TextColor = inactiveColor
@@ -121,7 +165,6 @@ Private Sub ShowPanel(panelToShow As Panel)
 	lblHistoryIcon.TextColor = inactiveColor
 	lblHistory.TextColor = inactiveColor
 
-	' Highlight the active tab in blue
 	Dim activeColor As Int = Colors.RGB(33, 150, 243)
 	If panelToShow = pnlContentDash Then
 		lblDashIcon.TextColor = activeColor
@@ -178,7 +221,6 @@ End Sub
 ' ORDERS TAB
 ' ======================
 
-' Loads all orders from the local database and displays them in the list
 Private Sub LoadOrdersIntoList
 	clvContentOrders.Clear
 
@@ -210,7 +252,6 @@ Private Sub LoadOrdersIntoList
 	rs.Close
 End Sub
 
-' Triggered when user taps an order in the list
 Private Sub clvContentOrders_ItemClick(Index As Int, Value As Object)
 	Dim orderID As Int = Value
 	ShowOrderDetails(orderID)
@@ -219,7 +260,6 @@ End Sub
 Private Sub clvContentOrders_ItemLongClick(Index As Int, Value As Object)
 End Sub
 
-' Shows a popup dialog with full details of the tapped order
 Private Sub ShowOrderDetails(orderID As Int)
 	Try
 		Dim cursorOrder As Cursor = Main.SQLProducts.ExecQuery2( _
@@ -246,7 +286,6 @@ Private Sub ShowOrderDetails(orderID As Int)
 		Dim orderStatus As String = cursorOrder.GetString("status")
 		cursorOrder.Close
 
-		' LEFT JOIN keeps order lines visible even if item master cache changed.
 		Dim cursorItems As Cursor = Main.SQLProducts.ExecQuery2( _
             "SELECT oi.product_id, oi.quantity, oi.price, oi.fulfillment_status, i.item_name " & _
             "FROM order_items oi " & _
@@ -298,7 +337,6 @@ Private Sub ShowOrderDetails(orderID As Int)
 	End Try
 End Sub
 
-' Navigates to the Add Order screen
 Private Sub bttnAddOrder_Click
 	StartActivity(addOrderActivity)
 End Sub
@@ -307,8 +345,6 @@ End Sub
 ' DASHBOARD TAB - FETCH PRODUCTS
 ' ======================
 
-' Triggered when user taps Fetch Products
-' Downloads fresh product list from server and saves it locally
 Private Sub bttnFetchProducts_Click
 	If Main.VENDOR_ID <= 0 Then
 		ShowFetchErrorMessage("No vendor assigned to current login")
@@ -344,7 +380,6 @@ Private Sub bttnFetchProducts_Click
 	j.Release
 End Sub
 
-' Disables/enables the fetch button to prevent tapping while loading
 Private Sub SetFetchButtonBusyState(isBusy As Boolean)
 	If isBusy Then
 		bttnFetchProducts.Enabled = False
@@ -355,7 +390,6 @@ Private Sub SetFetchButtonBusyState(isBusy As Boolean)
 	End If
 End Sub
 
-' Parses the JSON response from the server and saves all products to local database
 Private Sub ParseAndSaveProductsFromServerResponse(response As String)
 	Try
 		Dim parser As JSONParser
@@ -381,7 +415,6 @@ Private Sub ParseAndSaveProductsFromServerResponse(response As String)
 	End Try
 End Sub
 
-' Clears the old cached products and inserts the fresh ones from the server
 Private Sub DeleteOldCacheAndSaveFreshProducts(items As List)
 	Dim currentVendor As Int = Main.VENDOR_ID
 	If currentVendor <= 0 Then
@@ -389,7 +422,6 @@ Private Sub DeleteOldCacheAndSaveFreshProducts(items As List)
 		Return
 	End If
 
-	' Replace only current vendor's cache, not all items.
 	Main.SQLProducts.ExecNonQuery2("DELETE FROM items WHERE vendor_id = ?", Array As Object(currentVendor))
 
 	For i = 0 To items.Size - 1
@@ -411,7 +443,6 @@ Private Sub DeleteOldCacheAndSaveFreshProducts(items As List)
 	Next
 End Sub
 
-' Shows a red error message on the dashboard status label
 Private Sub ShowFetchErrorMessage(errorMessage As String)
 	lblFetchStatus.Text = "✗ " & errorMessage
 	lblFetchStatus.TextColor = Colors.Red
@@ -421,7 +452,6 @@ End Sub
 ' INVENTORY TAB
 ' ======================
 
-' Loads all active products into the inventory scroll view
 Private Sub LoadInventoryItemsIntoScrollView
 	svInventory.Panel.RemoveAllViews
 	Dim top As Int = 0
@@ -471,7 +501,6 @@ Private Sub LoadInventoryItemsIntoScrollView
 	svInventory.Panel.Height = top
 End Sub
 
-' Shows a message when there are no products cached yet
 Private Sub ShowEmptyInventoryMessage
 	Dim lblEmpty As Label
 	lblEmpty.Initialize("")
@@ -486,14 +515,23 @@ End Sub
 ' DASHBOARD TAB - STATUS
 ' ======================
 
-' Updates the dashboard labels: product count, last sync time, pending orders
 Private Sub UpdateDashboardStatusLabels
-	Dim rs As ResultSet = Main.SQLProducts.ExecQuery2( _
-        "SELECT COUNT(*) as count FROM items WHERE is_active = 1 AND vendor_id = ?", _
-        Array As String(Main.VENDOR_ID))
-	rs.NextRow
-	Dim cachedProductCount As Int = rs.GetInt("count")
-	rs.Close
+	EnsureLocalSchema
+
+	Dim cachedProductCount As Int = 0
+	Dim rs As ResultSet
+	Try
+		rs = Main.SQLProducts.ExecQuery2( _
+            "SELECT COUNT(*) as count FROM items WHERE is_active = 1 AND vendor_id = ?", _
+            Array As String(Main.VENDOR_ID))
+		If rs.NextRow Then
+			cachedProductCount = rs.GetInt("count")
+		End If
+		rs.Close
+	Catch
+		If rs.IsInitialized Then rs.Close
+		cachedProductCount = 0
+	End Try
 
 	If cachedProductCount > 0 Then
 		If Main.ITEMS_LAST_SYNC > 0 Then
@@ -512,19 +550,26 @@ Private Sub UpdateDashboardStatusLabels
 		lblFetchStatus.TextColor = Colors.Gray
 	End If
 
-	Dim rsOrders As ResultSet = Main.SQLProducts.ExecQuery2( _
-        "SELECT COUNT(*) as count FROM orders WHERE sync_status = 'Holding' AND vendor_id = ? AND user_id = ?", _
-        Array As String(Main.VENDOR_ID, Main.LoggedInUserID))
-	rsOrders.NextRow
-	Dim pendingOrderCount As Int = rsOrders.GetInt("count")
-	rsOrders.Close
+	Dim pendingOrderCount As Int = 0
+	Dim rsOrders As ResultSet
+	Try
+		rsOrders = Main.SQLProducts.ExecQuery2( _
+            "SELECT COUNT(*) as count FROM orders WHERE sync_status = 'Holding' AND vendor_id = ? AND user_id = ?", _
+            Array As String(Main.VENDOR_ID, Main.LoggedInUserID))
+		If rsOrders.NextRow Then
+			pendingOrderCount = rsOrders.GetInt("count")
+		End If
+		rsOrders.Close
+	Catch
+		If rsOrders.IsInitialized Then rsOrders.Close
+		pendingOrderCount = 0
+	End Try
 
 	If pendingOrderCount > 0 Then
 		ToastMessageShow("You have " & pendingOrderCount & " orders waiting to sync", False)
 	End If
 End Sub
 
-' Converts a timestamp to human-readable text like "5 minutes ago" or "2 hours ago"
 Private Sub FormatTimeAgo(syncTimestamp As Long) As String
 	Dim minutesAgo As Long = (DateTime.Now - syncTimestamp) / DateTime.TicksPerMinute
 
