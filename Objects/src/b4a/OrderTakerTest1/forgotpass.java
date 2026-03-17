@@ -34,7 +34,7 @@ public class forgotpass extends Activity implements B4AActivity{
 		super.onCreate(savedInstanceState);
         mostCurrent = this;
 		if (processBA == null) {
-			processBA = new anywheresoftware.b4a.ShellBA(this.getApplicationContext(), null, null, "b4a.OrderTakerTest1", "b4a.OrderTakerTest1.forgotpass");
+			processBA = new BA(this.getApplicationContext(), null, null, "b4a.OrderTakerTest1", "b4a.OrderTakerTest1.forgotpass");
 			processBA.loadHtSubs(this.getClass());
 	        float deviceScale = getApplicationContext().getResources().getDisplayMetrics().density;
 	        BALayout.setDeviceScale(deviceScale);
@@ -335,15 +335,6 @@ public class forgotpass extends Activity implements B4AActivity{
             
     }
 
-
-
-public static void initializeProcessGlobals() {
-             try {
-                Class.forName(BA.applicationContext.getPackageName() + ".main").getMethod("initializeProcessGlobals").invoke(null, null);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-}
 public anywheresoftware.b4a.keywords.Common __c = null;
 public b4a.OrderTakerTest1.main _main = null;
 public b4a.OrderTakerTest1.controls _controls = null;
@@ -352,51 +343,48 @@ public b4a.OrderTakerTest1.addorderactivity _addorderactivity = null;
 public b4a.OrderTakerTest1.starter _starter = null;
 public b4a.OrderTakerTest1.userorders _userorders = null;
 public b4a.OrderTakerTest1.httputils2service _httputils2service = null;
+
+public static void initializeProcessGlobals() {
+             try {
+                Class.forName(BA.applicationContext.getPackageName() + ".main").getMethod("initializeProcessGlobals").invoke(null, null);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+}
 public static String  _activity_create(boolean _firsttime) throws Exception{
-RDebugUtils.currentModule="forgotpass";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "activity_create", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "activity_create", new Object[] {_firsttime}));}
-RDebugUtils.currentLine=720896;
- //BA.debugLineNum = 720896;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
-RDebugUtils.currentLine=720898;
- //BA.debugLineNum = 720898;BA.debugLine="Activity.LoadLayout(\"forgotPass\")";
+ //BA.debugLineNum = 18;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
+ //BA.debugLineNum = 20;BA.debugLine="Activity.LoadLayout(\"forgotPass\")";
 mostCurrent._activity.LoadLayout("forgotPass",mostCurrent.activityBA);
-RDebugUtils.currentLine=720900;
- //BA.debugLineNum = 720900;BA.debugLine="End Sub";
+ //BA.debugLineNum = 22;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_pause(boolean _userclosed) throws Exception{
-RDebugUtils.currentModule="forgotpass";
-RDebugUtils.currentLine=851968;
- //BA.debugLineNum = 851968;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
-RDebugUtils.currentLine=851970;
- //BA.debugLineNum = 851970;BA.debugLine="End Sub";
+ //BA.debugLineNum = 28;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
+ //BA.debugLineNum = 30;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_resume() throws Exception{
-RDebugUtils.currentModule="forgotpass";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "activity_resume", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "activity_resume", null));}
-RDebugUtils.currentLine=786432;
- //BA.debugLineNum = 786432;BA.debugLine="Sub Activity_Resume";
-RDebugUtils.currentLine=786434;
- //BA.debugLineNum = 786434;BA.debugLine="End Sub";
+ //BA.debugLineNum = 24;BA.debugLine="Sub Activity_Resume";
+ //BA.debugLineNum = 26;BA.debugLine="End Sub";
 return "";
 }
 public static String  _bttn1_click() throws Exception{
-RDebugUtils.currentModule="forgotpass";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "bttn1_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "bttn1_click", null));}
-RDebugUtils.currentLine=917504;
- //BA.debugLineNum = 917504;BA.debugLine="Private Sub bttn1_Click";
-RDebugUtils.currentLine=917505;
- //BA.debugLineNum = 917505;BA.debugLine="StartActivity(Main)";
+ //BA.debugLineNum = 33;BA.debugLine="Private Sub bttn1_Click";
+ //BA.debugLineNum = 34;BA.debugLine="StartActivity(Main)";
 anywheresoftware.b4a.keywords.Common.StartActivity(processBA,(Object)(mostCurrent._main.getObject()));
-RDebugUtils.currentLine=917506;
- //BA.debugLineNum = 917506;BA.debugLine="Controls.SetAnimation(\"slide_down_in\", \"slide_dow";
+ //BA.debugLineNum = 35;BA.debugLine="Controls.SetAnimation(\"slide_down_in\", \"slide_dow";
 mostCurrent._controls._setanimation /*String*/ (mostCurrent.activityBA,"slide_down_in","slide_down_out");
-RDebugUtils.currentLine=917507;
- //BA.debugLineNum = 917507;BA.debugLine="End Sub";
+ //BA.debugLineNum = 36;BA.debugLine="End Sub";
+return "";
+}
+public static String  _globals() throws Exception{
+ //BA.debugLineNum = 12;BA.debugLine="Sub Globals";
+ //BA.debugLineNum = 16;BA.debugLine="End Sub";
+return "";
+}
+public static String  _process_globals() throws Exception{
+ //BA.debugLineNum = 6;BA.debugLine="Sub Process_Globals";
+ //BA.debugLineNum = 10;BA.debugLine="End Sub";
 return "";
 }
 }

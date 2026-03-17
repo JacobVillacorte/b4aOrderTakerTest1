@@ -55,7 +55,7 @@ views.get("lblperson").vw.setWidth((int)((30d * scale)));
 views.get("lblperson").vw.setHeight((int)((30d * scale)));
 views.get("lblperson").vw.setTop((int)(((views.get("pnltop").vw.getHeight())-(views.get("lblperson").vw.getHeight()))/2d));
 views.get("lblloggedinuser").vw.setLeft((int)((views.get("lblperson").vw.getLeft() + views.get("lblperson").vw.getWidth())+(8d * scale)));
-views.get("lblloggedinuser").vw.setWidth((int)((25d / 100 * width)));
+views.get("lblloggedinuser").vw.setWidth((int)((45d / 100 * width)));
 views.get("lblloggedinuser").vw.setTop((int)(((views.get("pnltop").vw.getHeight())-(views.get("lblloggedinuser").vw.getHeight()))/2d));
 views.get("lbllogout").vw.setWidth((int)((50d * scale)));
 views.get("lbllogout").vw.setTop((int)(((views.get("pnltop").vw.getHeight())-(views.get("lbllogout").vw.getHeight()))/2d));
@@ -122,13 +122,9 @@ views.get("lblfetchstatus").vw.setLeft((int)(0d));
 views.get("lblcacheinfo").vw.setTop((int)(0d));
 views.get("lblfetchstatus").vw.setTop((int)((140d * scale)));
 views.get("lblfetchstatus").vw.setTop((int)((170d * scale)));
-//BA.debugLineNum = 158;BA.debugLine="svInventory.Left=0"[OrderTakerDashboard/General script]
 views.get("svinventory").vw.setLeft((int)(0d));
-//BA.debugLineNum = 159;BA.debugLine="svInventory.Top=0"[OrderTakerDashboard/General script]
 views.get("svinventory").vw.setTop((int)(0d));
-//BA.debugLineNum = 160;BA.debugLine="svInventory.Width=100%x"[OrderTakerDashboard/General script]
 views.get("svinventory").vw.setWidth((int)((100d / 100 * width)));
-//BA.debugLineNum = 161;BA.debugLine="svInventory.Height=100%y"[OrderTakerDashboard/General script]
 views.get("svinventory").vw.setHeight((int)((100d / 100 * height)));
 
 }

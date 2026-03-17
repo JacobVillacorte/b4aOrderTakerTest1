@@ -34,7 +34,7 @@ public class addorderactivity extends Activity implements B4AActivity{
 		super.onCreate(savedInstanceState);
         mostCurrent = this;
 		if (processBA == null) {
-			processBA = new anywheresoftware.b4a.ShellBA(this.getApplicationContext(), null, null, "b4a.OrderTakerTest1", "b4a.OrderTakerTest1.addorderactivity");
+			processBA = new BA(this.getApplicationContext(), null, null, "b4a.OrderTakerTest1", "b4a.OrderTakerTest1.addorderactivity");
 			processBA.loadHtSubs(this.getClass());
 	        float deviceScale = getApplicationContext().getResources().getDisplayMetrics().density;
 	        BALayout.setDeviceScale(deviceScale);
@@ -335,7 +335,48 @@ public class addorderactivity extends Activity implements B4AActivity{
             
     }
 
-
+public anywheresoftware.b4a.keywords.Common __c = null;
+public static anywheresoftware.b4a.objects.B4XViewWrapper.XUI _xui = null;
+public anywheresoftware.b4a.objects.collections.List _cartitems = null;
+public static int _selecteditemid = 0;
+public static String _selecteditemname = "";
+public static double _selecteditemprice = 0;
+public anywheresoftware.b4a.objects.PanelWrapper _pnladdorderactivitytop = null;
+public anywheresoftware.b4a.objects.PanelWrapper _pnladdorderactivitywhole = null;
+public anywheresoftware.b4a.objects.PanelWrapper _pnldim = null;
+public anywheresoftware.b4a.objects.ScrollViewWrapper _svcartsummary = null;
+public anywheresoftware.b4a.objects.LabelWrapper _lbltotalitems = null;
+public anywheresoftware.b4a.objects.LabelWrapper _lbltotalamount = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _bttnpurchasenow = null;
+public anywheresoftware.b4a.objects.LabelWrapper _lblexitorderactivity = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _bttnaddorderactivity = null;
+public anywheresoftware.b4a.objects.PanelWrapper _pnlselectitems = null;
+public b4a.example3.customlistview _clvproducts = null;
+public anywheresoftware.b4a.objects.EditTextWrapper _etsearchproducts = null;
+public anywheresoftware.b4a.objects.LabelWrapper _lblexitselectitems = null;
+public anywheresoftware.b4a.objects.PanelWrapper _pnlquantity = null;
+public anywheresoftware.b4a.objects.LabelWrapper _lblquantitytitle = null;
+public anywheresoftware.b4a.objects.LabelWrapper _lblselecteditem = null;
+public anywheresoftware.b4a.objects.EditTextWrapper _etquantityvalue = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _bttnminus = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _bttnadd = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _bttnaddtocartqty = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _bttncancelqty = null;
+public anywheresoftware.b4a.objects.PanelWrapper _pnlpurchasestatus = null;
+public anywheresoftware.b4a.objects.LabelWrapper _lblpurchasestatustitle = null;
+public anywheresoftware.b4a.objects.LabelWrapper _lblpurchasestatusmessage = null;
+public anywheresoftware.b4a.objects.CompoundButtonWrapper.RadioButtonWrapper _rbpaidreceived = null;
+public anywheresoftware.b4a.objects.CompoundButtonWrapper.RadioButtonWrapper _rbpaidbooked = null;
+public anywheresoftware.b4a.objects.CompoundButtonWrapper.RadioButtonWrapper _rbnotpaidbooked = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _bttnconfirmpurchasestatus = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _bttncancelpurchasestatus = null;
+public b4a.OrderTakerTest1.main _main = null;
+public b4a.OrderTakerTest1.controls _controls = null;
+public b4a.OrderTakerTest1.forgotpass _forgotpass = null;
+public b4a.OrderTakerTest1.ordertakerdashboard _ordertakerdashboard = null;
+public b4a.OrderTakerTest1.starter _starter = null;
+public b4a.OrderTakerTest1.userorders _userorders = null;
+public b4a.OrderTakerTest1.httputils2service _httputils2service = null;
 
 public static void initializeProcessGlobals() {
              try {
@@ -344,766 +385,851 @@ public static void initializeProcessGlobals() {
                 throw new RuntimeException(e);
             }
 }
-public anywheresoftware.b4a.keywords.Common __c = null;
-public static anywheresoftware.b4a.objects.B4XViewWrapper.XUI _xui = null;
-public anywheresoftware.b4a.objects.collections.List _cartitems = null;
-public anywheresoftware.b4a.objects.ButtonWrapper _bttnaddorderactivity = null;
-public anywheresoftware.b4a.objects.ButtonWrapper _bttnpurchasenow = null;
-public b4a.example3.customlistview _clvproducts = null;
-public anywheresoftware.b4a.objects.EditTextWrapper _etsearchproducts = null;
-public anywheresoftware.b4a.objects.LabelWrapper _lblexitorderactivity = null;
-public anywheresoftware.b4a.objects.LabelWrapper _lblexitselectitems = null;
-public anywheresoftware.b4a.objects.LabelWrapper _lbltotalitems = null;
-public anywheresoftware.b4a.objects.LabelWrapper _lbltotalamount = null;
-public anywheresoftware.b4a.objects.PanelWrapper _pnladdorderactivitytop = null;
-public anywheresoftware.b4a.objects.PanelWrapper _pnladdorderactivitywhole = null;
-public anywheresoftware.b4a.objects.PanelWrapper _pnldim = null;
-public anywheresoftware.b4a.objects.PanelWrapper _pnlselectitems = null;
-public anywheresoftware.b4a.objects.ScrollViewWrapper _svcartsummary = null;
-public anywheresoftware.b4a.objects.PanelWrapper _pnlquantity = null;
-public anywheresoftware.b4a.objects.LabelWrapper _lblquantitytitle = null;
-public anywheresoftware.b4a.objects.ButtonWrapper _bttncancelqty = null;
-public anywheresoftware.b4a.objects.LabelWrapper _lblselecteditem = null;
-public anywheresoftware.b4a.objects.ButtonWrapper _bttnminus = null;
-public anywheresoftware.b4a.objects.LabelWrapper _lblquantityvalue = null;
-public anywheresoftware.b4a.objects.ButtonWrapper _bttnadd = null;
-public anywheresoftware.b4a.objects.ButtonWrapper _bttnaddtocartqty = null;
-public static int _selecteditemid = 0;
-public static String _selecteditemname = "";
-public static double _selecteditemprice = 0;
-public b4a.OrderTakerTest1.main _main = null;
-public b4a.OrderTakerTest1.controls _controls = null;
-public b4a.OrderTakerTest1.forgotpass _forgotpass = null;
-public b4a.OrderTakerTest1.ordertakerdashboard _ordertakerdashboard = null;
-public b4a.OrderTakerTest1.starter _starter = null;
-public b4a.OrderTakerTest1.userorders _userorders = null;
-public b4a.OrderTakerTest1.httputils2service _httputils2service = null;
 public static String  _activity_create(boolean _firsttime) throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "activity_create", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "activity_create", new Object[] {_firsttime}));}
-RDebugUtils.currentLine=2359296;
- //BA.debugLineNum = 2359296;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
-RDebugUtils.currentLine=2359297;
- //BA.debugLineNum = 2359297;BA.debugLine="Activity.LoadLayout(\"addOrderActivity\")";
+ //BA.debugLineNum = 57;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
+ //BA.debugLineNum = 58;BA.debugLine="Activity.LoadLayout(\"addOrderActivity\")";
 mostCurrent._activity.LoadLayout("addOrderActivity",mostCurrent.activityBA);
-RDebugUtils.currentLine=2359299;
- //BA.debugLineNum = 2359299;BA.debugLine="CartItems.Initialize";
+ //BA.debugLineNum = 60;BA.debugLine="If Main.VENDOR_ID <= 0 Or Main.LoggedInUserID <=";
+if (mostCurrent._main._vendor_id /*int*/ <=0 || mostCurrent._main._loggedinuserid /*int*/ <=0) { 
+ //BA.debugLineNum = 61;BA.debugLine="ToastMessageShow(\"Session is invalid. Please log";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Session is invalid. Please login again."),anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 62;BA.debugLine="Activity.Finish";
+mostCurrent._activity.Finish();
+ //BA.debugLineNum = 63;BA.debugLine="Return";
+if (true) return "";
+ };
+ //BA.debugLineNum = 66;BA.debugLine="CartItems.Initialize";
 mostCurrent._cartitems.Initialize();
-RDebugUtils.currentLine=2359301;
- //BA.debugLineNum = 2359301;BA.debugLine="bttnPurchaseNow.Enabled = False";
+ //BA.debugLineNum = 68;BA.debugLine="bttnPurchaseNow.Enabled = False";
 mostCurrent._bttnpurchasenow.setEnabled(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=2359302;
- //BA.debugLineNum = 2359302;BA.debugLine="bttnPurchaseNow.Color = Colors.ARGB(80, 0, 0, 255";
+ //BA.debugLineNum = 69;BA.debugLine="bttnPurchaseNow.Color = Colors.ARGB(80, 0, 0, 255";
 mostCurrent._bttnpurchasenow.setColor(anywheresoftware.b4a.keywords.Common.Colors.ARGB((int) (80),(int) (0),(int) (0),(int) (255)));
-RDebugUtils.currentLine=2359304;
- //BA.debugLineNum = 2359304;BA.debugLine="LoadProducts";
-_loadproducts();
-RDebugUtils.currentLine=2359305;
- //BA.debugLineNum = 2359305;BA.debugLine="End Sub";
+ //BA.debugLineNum = 71;BA.debugLine="pnlPurchaseStatus.Visible = False";
+mostCurrent._pnlpurchasestatus.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 72;BA.debugLine="rbPaidReceived.Checked = True";
+mostCurrent._rbpaidreceived.setChecked(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 73;BA.debugLine="rbPaidBooked.Checked = False";
+mostCurrent._rbpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 74;BA.debugLine="rbNotPaidBooked.Checked = False";
+mostCurrent._rbnotpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 76;BA.debugLine="LoadProductsIntoList";
+_loadproductsintolist();
+ //BA.debugLineNum = 77;BA.debugLine="End Sub";
 return "";
 }
-public static String  _loadproducts() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "loadproducts", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "loadproducts", null));}
-String _searchtext = "";
-String _query = "";
+public static String  _activity_pause(boolean _userclosed) throws Exception{
+ //BA.debugLineNum = 82;BA.debugLine="Sub Activity_Pause(UserClosed As Boolean)";
+ //BA.debugLineNum = 83;BA.debugLine="End Sub";
+return "";
+}
+public static String  _activity_resume() throws Exception{
+ //BA.debugLineNum = 79;BA.debugLine="Sub Activity_Resume";
+ //BA.debugLineNum = 80;BA.debugLine="End Sub";
+return "";
+}
+public static String  _addcartitemtolist(int _productid,String _itemname,double _unitprice,int _quantity) throws Exception{
+anywheresoftware.b4a.objects.collections.Map _cartitem = null;
+int _existingproductid = 0;
+int _existingquantity = 0;
+ //BA.debugLineNum = 528;BA.debugLine="Private Sub AddCartItemToList(ProductID As Int, It";
+ //BA.debugLineNum = 529;BA.debugLine="For Each cartItem As Map In CartItems";
+_cartitem = new anywheresoftware.b4a.objects.collections.Map();
+{
+final anywheresoftware.b4a.BA.IterableList group1 = mostCurrent._cartitems;
+final int groupLen1 = group1.getSize()
+;int index1 = 0;
+;
+for (; index1 < groupLen1;index1++){
+_cartitem = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(group1.Get(index1)));
+ //BA.debugLineNum = 530;BA.debugLine="Dim existingProductID As Int = cartItem.Get(\"pro";
+_existingproductid = (int)(BA.ObjectToNumber(_cartitem.Get((Object)("product_id"))));
+ //BA.debugLineNum = 531;BA.debugLine="If existingProductID = ProductID Then";
+if (_existingproductid==_productid) { 
+ //BA.debugLineNum = 532;BA.debugLine="Dim existingQuantity As Int = cartItem.Get(\"qua";
+_existingquantity = (int)(BA.ObjectToNumber(_cartitem.Get((Object)("quantity"))));
+ //BA.debugLineNum = 533;BA.debugLine="cartItem.Put(\"quantity\", existingQuantity + Qua";
+_cartitem.Put((Object)("quantity"),(Object)(_existingquantity+_quantity));
+ //BA.debugLineNum = 534;BA.debugLine="Return";
+if (true) return "";
+ };
+ }
+};
+ //BA.debugLineNum = 538;BA.debugLine="Dim cartItem As Map";
+_cartitem = new anywheresoftware.b4a.objects.collections.Map();
+ //BA.debugLineNum = 539;BA.debugLine="cartItem.Initialize";
+_cartitem.Initialize();
+ //BA.debugLineNum = 540;BA.debugLine="cartItem.Put(\"product_id\", ProductID)";
+_cartitem.Put((Object)("product_id"),(Object)(_productid));
+ //BA.debugLineNum = 541;BA.debugLine="cartItem.Put(\"item_name\", ItemName)";
+_cartitem.Put((Object)("item_name"),(Object)(_itemname));
+ //BA.debugLineNum = 542;BA.debugLine="cartItem.Put(\"unit_price\", UnitPrice)";
+_cartitem.Put((Object)("unit_price"),(Object)(_unitprice));
+ //BA.debugLineNum = 543;BA.debugLine="cartItem.Put(\"quantity\", Quantity)";
+_cartitem.Put((Object)("quantity"),(Object)(_quantity));
+ //BA.debugLineNum = 544;BA.debugLine="CartItems.Add(cartItem)";
+mostCurrent._cartitems.Add((Object)(_cartitem.getObject()));
+ //BA.debugLineNum = 545;BA.debugLine="End Sub";
+return "";
+}
+public static String  _bttnadd_click() throws Exception{
+int _currentqty = 0;
+ //BA.debugLineNum = 347;BA.debugLine="Private Sub bttnAdd_Click";
+ //BA.debugLineNum = 348;BA.debugLine="Dim currentQty As Int = etQuantityValue.Text";
+_currentqty = (int)(Double.parseDouble(mostCurrent._etquantityvalue.getText()));
+ //BA.debugLineNum = 349;BA.debugLine="If currentQty < 999 Then";
+if (_currentqty<999) { 
+ //BA.debugLineNum = 350;BA.debugLine="etQuantityValue.Text = (currentQty + 1)";
+mostCurrent._etquantityvalue.setText(BA.ObjectToCharSequence((_currentqty+1)));
+ }else {
+ //BA.debugLineNum = 352;BA.debugLine="ToastMessageShow(\"Maximum quantity is 999\", Fals";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Maximum quantity is 999"),anywheresoftware.b4a.keywords.Common.False);
+ };
+ //BA.debugLineNum = 354;BA.debugLine="End Sub";
+return "";
+}
+public static String  _bttnaddorderactivity_click() throws Exception{
+ //BA.debugLineNum = 128;BA.debugLine="Private Sub bttnAddOrderActivity_Click";
+ //BA.debugLineNum = 129;BA.debugLine="pnlDim.Visible = True";
+mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 130;BA.debugLine="pnlSelectItems.Visible = True";
+mostCurrent._pnlselectitems.setVisible(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 131;BA.debugLine="pnlDim.BringToFront";
+mostCurrent._pnldim.BringToFront();
+ //BA.debugLineNum = 132;BA.debugLine="pnlSelectItems.BringToFront";
+mostCurrent._pnlselectitems.BringToFront();
+ //BA.debugLineNum = 133;BA.debugLine="End Sub";
+return "";
+}
+public static String  _bttnaddtocartqty_click() throws Exception{
+int _quantity = 0;
+ //BA.debugLineNum = 357;BA.debugLine="Private Sub bttnAddToCartQty_Click";
+ //BA.debugLineNum = 358;BA.debugLine="If IsNumber(etQuantityValue.Text) = False Then";
+if (anywheresoftware.b4a.keywords.Common.IsNumber(mostCurrent._etquantityvalue.getText())==anywheresoftware.b4a.keywords.Common.False) { 
+ //BA.debugLineNum = 359;BA.debugLine="ToastMessageShow(\"Please enter a valid number\",";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Please enter a valid number"),anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 360;BA.debugLine="etQuantityValue.Text = \"1\"";
+mostCurrent._etquantityvalue.setText(BA.ObjectToCharSequence("1"));
+ //BA.debugLineNum = 361;BA.debugLine="Return";
+if (true) return "";
+ };
+ //BA.debugLineNum = 364;BA.debugLine="Dim quantity As Int = etQuantityValue.Text";
+_quantity = (int)(Double.parseDouble(mostCurrent._etquantityvalue.getText()));
+ //BA.debugLineNum = 366;BA.debugLine="If quantity < 1 Then";
+if (_quantity<1) { 
+ //BA.debugLineNum = 367;BA.debugLine="ToastMessageShow(\"Minimum quantity is 1\", True)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Minimum quantity is 1"),anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 368;BA.debugLine="etQuantityValue.Text = \"1\"";
+mostCurrent._etquantityvalue.setText(BA.ObjectToCharSequence("1"));
+ //BA.debugLineNum = 369;BA.debugLine="Return";
+if (true) return "";
+ };
+ //BA.debugLineNum = 372;BA.debugLine="If quantity > 999 Then";
+if (_quantity>999) { 
+ //BA.debugLineNum = 373;BA.debugLine="ToastMessageShow(\"Maximum quantity is 999\", True";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Maximum quantity is 999"),anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 374;BA.debugLine="etQuantityValue.Text = \"999\"";
+mostCurrent._etquantityvalue.setText(BA.ObjectToCharSequence("999"));
+ //BA.debugLineNum = 375;BA.debugLine="Return";
+if (true) return "";
+ };
+ //BA.debugLineNum = 378;BA.debugLine="AddCartItemToList(SelectedItemID, SelectedItemNam";
+_addcartitemtolist(_selecteditemid,mostCurrent._selecteditemname,_selecteditemprice,_quantity);
+ //BA.debugLineNum = 380;BA.debugLine="RefreshCartDisplay";
+_refreshcartdisplay();
+ //BA.debugLineNum = 381;BA.debugLine="bttnPurchaseNow.Enabled = True";
+mostCurrent._bttnpurchasenow.setEnabled(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 382;BA.debugLine="bttnPurchaseNow.Color = Colors.Blue";
+mostCurrent._bttnpurchasenow.setColor(anywheresoftware.b4a.keywords.Common.Colors.Blue);
+ //BA.debugLineNum = 384;BA.debugLine="ToastMessageShow(\"Added \" & quantity & \"x \" & Sel";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Added "+BA.NumberToString(_quantity)+"x "+mostCurrent._selecteditemname),anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 386;BA.debugLine="pnlQuantity.Visible = False";
+mostCurrent._pnlquantity.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 387;BA.debugLine="pnlDim.Visible = False";
+mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 388;BA.debugLine="pnlSelectItems.Visible = False";
+mostCurrent._pnlselectitems.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 389;BA.debugLine="End Sub";
+return "";
+}
+public static String  _bttncancelpurchasestatus_click() throws Exception{
+ //BA.debugLineNum = 199;BA.debugLine="Private Sub bttnCancelPurchaseStatus_Click";
+ //BA.debugLineNum = 200;BA.debugLine="HidePurchaseStatusPopup";
+_hidepurchasestatuspopup();
+ //BA.debugLineNum = 201;BA.debugLine="End Sub";
+return "";
+}
+public static String  _bttncancelqty_click() throws Exception{
+ //BA.debugLineNum = 392;BA.debugLine="Private Sub bttnCancelQty_Click";
+ //BA.debugLineNum = 393;BA.debugLine="pnlQuantity.Visible = False";
+mostCurrent._pnlquantity.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 394;BA.debugLine="pnlDim.Visible = False";
+mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 395;BA.debugLine="End Sub";
+return "";
+}
+public static String  _bttnconfirmpurchasestatus_click() throws Exception{
+String _fulfillmentstatus = "";
+ //BA.debugLineNum = 184;BA.debugLine="Private Sub bttnConfirmPurchaseStatus_Click";
+ //BA.debugLineNum = 185;BA.debugLine="Dim fulfillmentStatus As String = GetSelectedFulf";
+_fulfillmentstatus = _getselectedfulfillmentstatus();
+ //BA.debugLineNum = 187;BA.debugLine="If fulfillmentStatus = \"\" Then";
+if ((_fulfillmentstatus).equals("")) { 
+ //BA.debugLineNum = 188;BA.debugLine="ToastMessageShow(\"Please select a fulfillment st";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Please select a fulfillment status"),anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 189;BA.debugLine="Return";
+if (true) return "";
+ };
+ //BA.debugLineNum = 192;BA.debugLine="SaveOrderToLocalDatabase(fulfillmentStatus)";
+_saveordertolocaldatabase(_fulfillmentstatus);
+ //BA.debugLineNum = 193;BA.debugLine="HidePurchaseStatusPopup";
+_hidepurchasestatuspopup();
+ //BA.debugLineNum = 194;BA.debugLine="ClearCartAndResetUI";
+_clearcartandresetui();
+ //BA.debugLineNum = 195;BA.debugLine="ToastMessageShow(\"Order added successfully!\", Fal";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Order added successfully!"),anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 196;BA.debugLine="Activity.Finish";
+mostCurrent._activity.Finish();
+ //BA.debugLineNum = 197;BA.debugLine="End Sub";
+return "";
+}
+public static String  _bttnminus_click() throws Exception{
+int _currentqty = 0;
+ //BA.debugLineNum = 337;BA.debugLine="Private Sub bttnMinus_Click";
+ //BA.debugLineNum = 338;BA.debugLine="Dim currentQty As Int = etQuantityValue.Text";
+_currentqty = (int)(Double.parseDouble(mostCurrent._etquantityvalue.getText()));
+ //BA.debugLineNum = 339;BA.debugLine="If currentQty > 1 Then";
+if (_currentqty>1) { 
+ //BA.debugLineNum = 340;BA.debugLine="etQuantityValue.Text = (currentQty - 1)";
+mostCurrent._etquantityvalue.setText(BA.ObjectToCharSequence((_currentqty-1)));
+ }else {
+ //BA.debugLineNum = 342;BA.debugLine="ToastMessageShow(\"Minimum quantity is 1\", False)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Minimum quantity is 1"),anywheresoftware.b4a.keywords.Common.False);
+ };
+ //BA.debugLineNum = 344;BA.debugLine="End Sub";
+return "";
+}
+public static String  _bttnpurchasenow_click() throws Exception{
+ //BA.debugLineNum = 147;BA.debugLine="Private Sub bttnPurchaseNow_Click";
+ //BA.debugLineNum = 148;BA.debugLine="If CartItems.Size = 0 Then";
+if (mostCurrent._cartitems.getSize()==0) { 
+ //BA.debugLineNum = 149;BA.debugLine="ToastMessageShow(\"Add items first\", True)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Add items first"),anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 150;BA.debugLine="Return";
+if (true) return "";
+ };
+ //BA.debugLineNum = 153;BA.debugLine="ShowPurchaseStatusPopup";
+_showpurchasestatuspopup();
+ //BA.debugLineNum = 154;BA.debugLine="End Sub";
+return "";
+}
+public static String  _clearcartandresetui() throws Exception{
+ //BA.debugLineNum = 221;BA.debugLine="Private Sub ClearCartAndResetUI";
+ //BA.debugLineNum = 222;BA.debugLine="CartItems.Clear";
+mostCurrent._cartitems.Clear();
+ //BA.debugLineNum = 223;BA.debugLine="RefreshCartDisplay";
+_refreshcartdisplay();
+ //BA.debugLineNum = 225;BA.debugLine="bttnPurchaseNow.Color = Colors.ARGB(80, 200, 200,";
+mostCurrent._bttnpurchasenow.setColor(anywheresoftware.b4a.keywords.Common.Colors.ARGB((int) (80),(int) (200),(int) (200),(int) (200)));
+ //BA.debugLineNum = 226;BA.debugLine="bttnPurchaseNow.Enabled = False";
+mostCurrent._bttnpurchasenow.setEnabled(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 228;BA.debugLine="rbPaidReceived.Checked = True";
+mostCurrent._rbpaidreceived.setChecked(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 229;BA.debugLine="rbPaidBooked.Checked = False";
+mostCurrent._rbpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 230;BA.debugLine="rbNotPaidBooked.Checked = False";
+mostCurrent._rbnotpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 231;BA.debugLine="End Sub";
+return "";
+}
+public static String  _clvproducts_itemclick(int _index,Object _value) throws Exception{
+int _itemid = 0;
 anywheresoftware.b4a.sql.SQL.ResultSetWrapper _rs = null;
+ //BA.debugLineNum = 308;BA.debugLine="Private Sub clvProducts_ItemClick(Index As Int, Va";
+ //BA.debugLineNum = 309;BA.debugLine="Dim itemID As Int = Value";
+_itemid = (int)(BA.ObjectToNumber(_value));
+ //BA.debugLineNum = 311;BA.debugLine="Dim rs As ResultSet = Main.SQLProducts.ExecQuery2";
+_rs = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
+_rs = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery2("SELECT * FROM items WHERE item_id=?",new String[]{BA.NumberToString(_itemid)})));
+ //BA.debugLineNum = 313;BA.debugLine="If rs.NextRow Then";
+if (_rs.NextRow()) { 
+ //BA.debugLineNum = 315;BA.debugLine="SelectedItemID = itemID";
+_selecteditemid = _itemid;
+ //BA.debugLineNum = 316;BA.debugLine="SelectedItemName = rs.GetString(\"item_name\")";
+mostCurrent._selecteditemname = _rs.GetString("item_name");
+ //BA.debugLineNum = 317;BA.debugLine="SelectedItemPrice = rs.GetDouble(\"unit_price\")";
+_selecteditemprice = _rs.GetDouble("unit_price");
+ //BA.debugLineNum = 320;BA.debugLine="lblSelectedItem.Text = SelectedItemName & Chr(10";
+mostCurrent._lblselecteditem.setText(BA.ObjectToCharSequence(mostCurrent._selecteditemname+BA.ObjectToString(anywheresoftware.b4a.keywords.Common.Chr((int) (10)))+"₱"+BA.NumberToString(_selecteditemprice)));
+ //BA.debugLineNum = 321;BA.debugLine="etQuantityValue.Text = \"1\"";
+mostCurrent._etquantityvalue.setText(BA.ObjectToCharSequence("1"));
+ //BA.debugLineNum = 324;BA.debugLine="pnlDim.Visible = True";
+mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 325;BA.debugLine="pnlDim.BringToFront";
+mostCurrent._pnldim.BringToFront();
+ //BA.debugLineNum = 326;BA.debugLine="pnlQuantity.Visible = True";
+mostCurrent._pnlquantity.setVisible(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 327;BA.debugLine="pnlQuantity.BringToFront";
+mostCurrent._pnlquantity.BringToFront();
+ };
+ //BA.debugLineNum = 329;BA.debugLine="rs.Close";
+_rs.Close();
+ //BA.debugLineNum = 330;BA.debugLine="End Sub";
+return "";
+}
+public static String  _etsearchproducts_textchanged(String _old,String _new) throws Exception{
+ //BA.debugLineNum = 241;BA.debugLine="Private Sub etSearchProducts_TextChanged(Old As St";
+ //BA.debugLineNum = 242;BA.debugLine="LoadProductsIntoList";
+_loadproductsintolist();
+ //BA.debugLineNum = 243;BA.debugLine="End Sub";
+return "";
+}
+public static String  _generatetransactionnumber() throws Exception{
+String _safedeviceid = "";
+anywheresoftware.b4a.sql.SQL.CursorWrapper _cursor = null;
+int _nextsequence = 0;
+String _lasttransaction = "";
+String[] _parts = null;
+ //BA.debugLineNum = 92;BA.debugLine="Sub GenerateTransactionNumber As String";
+ //BA.debugLineNum = 93;BA.debugLine="Try";
+try { //BA.debugLineNum = 94;BA.debugLine="Dim safeDeviceID As String = Main.DEVICE_ID";
+_safedeviceid = mostCurrent._main._device_id /*String*/ ;
+ //BA.debugLineNum = 95;BA.debugLine="If safeDeviceID = Null Or safeDeviceID = \"\" Then";
+if (_safedeviceid== null || (_safedeviceid).equals("")) { 
+_safedeviceid = "UNKNOWNDEVICE";};
+ //BA.debugLineNum = 97;BA.debugLine="Dim cursor As Cursor = Main.SQLProducts.ExecQuer";
+_cursor = new anywheresoftware.b4a.sql.SQL.CursorWrapper();
+_cursor = (anywheresoftware.b4a.sql.SQL.CursorWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.CursorWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery2("SELECT transaction_number FROM orders WHERE device_id = ? ORDER BY order_id DESC LIMIT 1",new String[]{_safedeviceid})));
+ //BA.debugLineNum = 101;BA.debugLine="Dim nextSequence As Int = 1";
+_nextsequence = (int) (1);
+ //BA.debugLineNum = 103;BA.debugLine="If cursor.RowCount > 0 Then";
+if (_cursor.getRowCount()>0) { 
+ //BA.debugLineNum = 104;BA.debugLine="cursor.Position = 0";
+_cursor.setPosition((int) (0));
+ //BA.debugLineNum = 105;BA.debugLine="Dim lastTransaction As String = cursor.GetStrin";
+_lasttransaction = _cursor.GetString("transaction_number");
+ //BA.debugLineNum = 106;BA.debugLine="If lastTransaction <> Null And lastTransaction.";
+if (_lasttransaction!= null && _lasttransaction.contains("-")) { 
+ //BA.debugLineNum = 107;BA.debugLine="Dim parts() As String = Regex.Split(\"-\", lastT";
+_parts = anywheresoftware.b4a.keywords.Common.Regex.Split("-",_lasttransaction);
+ //BA.debugLineNum = 108;BA.debugLine="If parts.Length >= 2 Then";
+if (_parts.length>=2) { 
+ //BA.debugLineNum = 109;BA.debugLine="nextSequence = parts(parts.Length - 1) + 1";
+_nextsequence = (int) ((double)(Double.parseDouble(_parts[(int) (_parts.length-1)]))+1);
+ };
+ };
+ };
+ //BA.debugLineNum = 113;BA.debugLine="cursor.Close";
+_cursor.Close();
+ //BA.debugLineNum = 115;BA.debugLine="Return safeDeviceID & \"-\" & NumberFormat(nextSeq";
+if (true) return _safedeviceid+"-"+anywheresoftware.b4a.keywords.Common.NumberFormat(_nextsequence,(int) (3),(int) (0));
+ } 
+       catch (Exception e19) {
+			processBA.setLastException(e19); //BA.debugLineNum = 118;BA.debugLine="Log(\"GenerateTransactionNumber error: \" & LastEx";
+anywheresoftware.b4a.keywords.Common.LogImpl("03473434","GenerateTransactionNumber error: "+anywheresoftware.b4a.keywords.Common.LastException(mostCurrent.activityBA).getMessage(),0);
+ //BA.debugLineNum = 119;BA.debugLine="Return Main.DEVICE_ID & \"-ERR\"";
+if (true) return mostCurrent._main._device_id /*String*/ +"-ERR";
+ };
+ //BA.debugLineNum = 121;BA.debugLine="End Sub";
+return "";
+}
+public static String  _getdeliverystatusfromfulfillmentstatus(String _fulfillmentstatus) throws Exception{
+ //BA.debugLineNum = 519;BA.debugLine="Private Sub GetDeliveryStatusFromFulfillmentStatus";
+ //BA.debugLineNum = 520;BA.debugLine="If FulfillmentStatus = \"Paid-Received\" Then";
+if ((_fulfillmentstatus).equals("Paid-Received")) { 
+ //BA.debugLineNum = 521;BA.debugLine="Return \"Received\"";
+if (true) return "Received";
+ }else {
+ //BA.debugLineNum = 523;BA.debugLine="Return \"NotReceived\"";
+if (true) return "NotReceived";
+ };
+ //BA.debugLineNum = 525;BA.debugLine="End Sub";
+return "";
+}
+public static String  _getpaymentstatusfromfulfillmentstatus(String _fulfillmentstatus) throws Exception{
+ //BA.debugLineNum = 510;BA.debugLine="Private Sub GetPaymentStatusFromFulfillmentStatus(";
+ //BA.debugLineNum = 511;BA.debugLine="If FulfillmentStatus = \"Paid-Received\" Or Fulfill";
+if ((_fulfillmentstatus).equals("Paid-Received") || (_fulfillmentstatus).equals("Paid-Booked")) { 
+ //BA.debugLineNum = 512;BA.debugLine="Return \"Paid\"";
+if (true) return "Paid";
+ }else {
+ //BA.debugLineNum = 514;BA.debugLine="Return \"NotPaid\"";
+if (true) return "NotPaid";
+ };
+ //BA.debugLineNum = 516;BA.debugLine="End Sub";
+return "";
+}
+public static String  _getselectedfulfillmentstatus() throws Exception{
+ //BA.debugLineNum = 172;BA.debugLine="Private Sub GetSelectedFulfillmentStatus As String";
+ //BA.debugLineNum = 173;BA.debugLine="If rbPaidReceived.Checked Then";
+if (mostCurrent._rbpaidreceived.getChecked()) { 
+ //BA.debugLineNum = 174;BA.debugLine="Return \"Paid-Received\"";
+if (true) return "Paid-Received";
+ }else if(mostCurrent._rbpaidbooked.getChecked()) { 
+ //BA.debugLineNum = 176;BA.debugLine="Return \"Paid-Booked\"";
+if (true) return "Paid-Booked";
+ }else if(mostCurrent._rbnotpaidbooked.getChecked()) { 
+ //BA.debugLineNum = 178;BA.debugLine="Return \"NotPaid-Booked\"";
+if (true) return "NotPaid-Booked";
+ }else {
+ //BA.debugLineNum = 180;BA.debugLine="Return \"\"";
+if (true) return "";
+ };
+ //BA.debugLineNum = 182;BA.debugLine="End Sub";
+return "";
+}
+public static String  _globals() throws Exception{
+ //BA.debugLineNum = 10;BA.debugLine="Sub Globals";
+ //BA.debugLineNum = 12;BA.debugLine="Private CartItems As List";
+mostCurrent._cartitems = new anywheresoftware.b4a.objects.collections.List();
+ //BA.debugLineNum = 15;BA.debugLine="Private SelectedItemID As Int";
+_selecteditemid = 0;
+ //BA.debugLineNum = 16;BA.debugLine="Private SelectedItemName As String";
+mostCurrent._selecteditemname = "";
+ //BA.debugLineNum = 17;BA.debugLine="Private SelectedItemPrice As Double";
+_selecteditemprice = 0;
+ //BA.debugLineNum = 20;BA.debugLine="Private pnladdOrderActivityTop As Panel";
+mostCurrent._pnladdorderactivitytop = new anywheresoftware.b4a.objects.PanelWrapper();
+ //BA.debugLineNum = 21;BA.debugLine="Private pnladdOrderActivityWhole As Panel";
+mostCurrent._pnladdorderactivitywhole = new anywheresoftware.b4a.objects.PanelWrapper();
+ //BA.debugLineNum = 22;BA.debugLine="Private pnlDim As Panel";
+mostCurrent._pnldim = new anywheresoftware.b4a.objects.PanelWrapper();
+ //BA.debugLineNum = 23;BA.debugLine="Private svCartSummary As ScrollView";
+mostCurrent._svcartsummary = new anywheresoftware.b4a.objects.ScrollViewWrapper();
+ //BA.debugLineNum = 24;BA.debugLine="Private lblTotalItems As Label";
+mostCurrent._lbltotalitems = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 25;BA.debugLine="Private lblTotalAmount As Label";
+mostCurrent._lbltotalamount = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 26;BA.debugLine="Private bttnPurchaseNow As Button";
+mostCurrent._bttnpurchasenow = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 27;BA.debugLine="Private lblExitOrderActivity As Label";
+mostCurrent._lblexitorderactivity = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 28;BA.debugLine="Private bttnAddOrderActivity As Button";
+mostCurrent._bttnaddorderactivity = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 31;BA.debugLine="Private pnlSelectItems As Panel";
+mostCurrent._pnlselectitems = new anywheresoftware.b4a.objects.PanelWrapper();
+ //BA.debugLineNum = 32;BA.debugLine="Private clvProducts As CustomListView";
+mostCurrent._clvproducts = new b4a.example3.customlistview();
+ //BA.debugLineNum = 33;BA.debugLine="Private etSearchProducts As EditText";
+mostCurrent._etsearchproducts = new anywheresoftware.b4a.objects.EditTextWrapper();
+ //BA.debugLineNum = 34;BA.debugLine="Private lblExitSelectItems As Label";
+mostCurrent._lblexitselectitems = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 37;BA.debugLine="Private pnlQuantity As Panel";
+mostCurrent._pnlquantity = new anywheresoftware.b4a.objects.PanelWrapper();
+ //BA.debugLineNum = 38;BA.debugLine="Private lblQuantityTitle As Label";
+mostCurrent._lblquantitytitle = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 39;BA.debugLine="Private lblSelectedItem As Label";
+mostCurrent._lblselecteditem = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 40;BA.debugLine="Private etQuantityValue As EditText";
+mostCurrent._etquantityvalue = new anywheresoftware.b4a.objects.EditTextWrapper();
+ //BA.debugLineNum = 41;BA.debugLine="Private bttnMinus As Button";
+mostCurrent._bttnminus = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 42;BA.debugLine="Private bttnAdd As Button";
+mostCurrent._bttnadd = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 43;BA.debugLine="Private bttnAddToCartQty As Button";
+mostCurrent._bttnaddtocartqty = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 44;BA.debugLine="Private bttnCancelQty As Button";
+mostCurrent._bttncancelqty = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 47;BA.debugLine="Private pnlPurchaseStatus As Panel";
+mostCurrent._pnlpurchasestatus = new anywheresoftware.b4a.objects.PanelWrapper();
+ //BA.debugLineNum = 48;BA.debugLine="Private lblPurchaseStatusTitle As Label";
+mostCurrent._lblpurchasestatustitle = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 49;BA.debugLine="Private lblPurchaseStatusMessage As Label";
+mostCurrent._lblpurchasestatusmessage = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 50;BA.debugLine="Private rbPaidReceived As RadioButton";
+mostCurrent._rbpaidreceived = new anywheresoftware.b4a.objects.CompoundButtonWrapper.RadioButtonWrapper();
+ //BA.debugLineNum = 51;BA.debugLine="Private rbPaidBooked As RadioButton";
+mostCurrent._rbpaidbooked = new anywheresoftware.b4a.objects.CompoundButtonWrapper.RadioButtonWrapper();
+ //BA.debugLineNum = 52;BA.debugLine="Private rbNotPaidBooked As RadioButton";
+mostCurrent._rbnotpaidbooked = new anywheresoftware.b4a.objects.CompoundButtonWrapper.RadioButtonWrapper();
+ //BA.debugLineNum = 53;BA.debugLine="Private bttnConfirmPurchaseStatus As Button";
+mostCurrent._bttnconfirmpurchasestatus = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 54;BA.debugLine="Private bttnCancelPurchaseStatus As Button";
+mostCurrent._bttncancelpurchasestatus = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 55;BA.debugLine="End Sub";
+return "";
+}
+public static String  _hidepurchasestatuspopup() throws Exception{
+ //BA.debugLineNum = 167;BA.debugLine="Private Sub HidePurchaseStatusPopup";
+ //BA.debugLineNum = 168;BA.debugLine="pnlPurchaseStatus.Visible = False";
+mostCurrent._pnlpurchasestatus.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 169;BA.debugLine="pnlDim.Visible = False";
+mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 170;BA.debugLine="End Sub";
+return "";
+}
+public static String  _lblexitorderactivity_click() throws Exception{
+ //BA.debugLineNum = 142;BA.debugLine="Private Sub lblExitOrderActivity_Click";
+ //BA.debugLineNum = 143;BA.debugLine="Activity.Finish";
+mostCurrent._activity.Finish();
+ //BA.debugLineNum = 144;BA.debugLine="End Sub";
+return "";
+}
+public static String  _lblexitselectitems_click() throws Exception{
+ //BA.debugLineNum = 136;BA.debugLine="Private Sub lblExitSelectItems_Click";
+ //BA.debugLineNum = 137;BA.debugLine="pnlDim.Visible = False";
+mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 138;BA.debugLine="pnlSelectItems.Visible = False";
+mostCurrent._pnlselectitems.setVisible(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 139;BA.debugLine="End Sub";
+return "";
+}
+public static String  _loadproductsintolist() throws Exception{
+String _searchtext = "";
+anywheresoftware.b4a.sql.SQL.ResultSetWrapper _rs = null;
+String _vendoridtext = "";
+String _likevalue = "";
 anywheresoftware.b4a.objects.PanelWrapper _pnl = null;
 anywheresoftware.b4a.objects.LabelWrapper _lblname = null;
 anywheresoftware.b4a.objects.LabelWrapper _lblprice = null;
 anywheresoftware.b4a.objects.LabelWrapper _lblsku = null;
-RDebugUtils.currentLine=3080192;
- //BA.debugLineNum = 3080192;BA.debugLine="Private Sub LoadProducts";
-RDebugUtils.currentLine=3080193;
- //BA.debugLineNum = 3080193;BA.debugLine="clvProducts.Clear";
+ //BA.debugLineNum = 246;BA.debugLine="Private Sub LoadProductsIntoList";
+ //BA.debugLineNum = 247;BA.debugLine="clvProducts.Clear";
 mostCurrent._clvproducts._clear();
-RDebugUtils.currentLine=3080195;
- //BA.debugLineNum = 3080195;BA.debugLine="Dim searchText As String = etSearchProducts.Text.";
-_searchtext = mostCurrent._etsearchproducts.getText().trim().toLowerCase();
-RDebugUtils.currentLine=3080197;
- //BA.debugLineNum = 3080197;BA.debugLine="Dim query As String";
-_query = "";
-RDebugUtils.currentLine=3080198;
- //BA.debugLineNum = 3080198;BA.debugLine="If searchText = \"\" Then";
-if ((_searchtext).equals("")) { 
-RDebugUtils.currentLine=3080200;
- //BA.debugLineNum = 3080200;BA.debugLine="query = \"SELECT * FROM items WHERE is_active = 1";
-_query = "SELECT * FROM items WHERE is_active = 1 ORDER BY item_name";
- }else {
-RDebugUtils.currentLine=3080203;
- //BA.debugLineNum = 3080203;BA.debugLine="query = \"SELECT * FROM items WHERE is_active = 1";
-_query = "SELECT * FROM items WHERE is_active = 1 AND (LOWER(item_name) LIKE '%"+_searchtext+"%' OR LOWER(item_code) LIKE '%"+_searchtext+"%') ORDER BY item_name";
- };
-RDebugUtils.currentLine=3080206;
- //BA.debugLineNum = 3080206;BA.debugLine="Dim rs As ResultSet = Main.SQLProducts.ExecQuery(";
-_rs = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
-_rs = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery(_query)));
-RDebugUtils.currentLine=3080208;
- //BA.debugLineNum = 3080208;BA.debugLine="If rs.RowCount = 0 Then";
-if (_rs.getRowCount()==0) { 
-RDebugUtils.currentLine=3080209;
- //BA.debugLineNum = 3080209;BA.debugLine="ToastMessageShow(\"No products found matching '\"";
-anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("No products found matching '"+_searchtext+"'"),anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=3080210;
- //BA.debugLineNum = 3080210;BA.debugLine="rs.Close";
-_rs.Close();
-RDebugUtils.currentLine=3080211;
- //BA.debugLineNum = 3080211;BA.debugLine="Return";
+ //BA.debugLineNum = 249;BA.debugLine="If Main.VENDOR_ID <= 0 Then";
+if (mostCurrent._main._vendor_id /*int*/ <=0) { 
+ //BA.debugLineNum = 250;BA.debugLine="ToastMessageShow(\"No vendor assigned. Please log";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("No vendor assigned. Please login again."),anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 251;BA.debugLine="Return";
 if (true) return "";
  };
-RDebugUtils.currentLine=3080214;
- //BA.debugLineNum = 3080214;BA.debugLine="Do While rs.NextRow";
+ //BA.debugLineNum = 254;BA.debugLine="Dim searchText As String = etSearchProducts.Text.";
+_searchtext = mostCurrent._etsearchproducts.getText().trim().toLowerCase();
+ //BA.debugLineNum = 255;BA.debugLine="Dim rs As ResultSet";
+_rs = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
+ //BA.debugLineNum = 256;BA.debugLine="Dim vendorIDText As String = Main.VENDOR_ID";
+_vendoridtext = BA.NumberToString(mostCurrent._main._vendor_id /*int*/ );
+ //BA.debugLineNum = 258;BA.debugLine="If searchText = \"\" Then";
+if ((_searchtext).equals("")) { 
+ //BA.debugLineNum = 259;BA.debugLine="rs = Main.SQLProducts.ExecQuery2( _";
+_rs = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery2("SELECT * FROM items WHERE is_active = 1 AND vendor_id = ? ORDER BY item_name",new String[]{_vendoridtext})));
+ }else {
+ //BA.debugLineNum = 263;BA.debugLine="Dim likeValue As String = \"%\" & searchText & \"%\"";
+_likevalue = "%"+_searchtext+"%";
+ //BA.debugLineNum = 264;BA.debugLine="rs = Main.SQLProducts.ExecQuery2( _";
+_rs = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery2("SELECT * FROM items WHERE is_active = 1 AND vendor_id = ? AND (LOWER(item_name) LIKE ? OR LOWER(item_code) LIKE ?) ORDER BY item_name",new String[]{_vendoridtext,_likevalue,_likevalue})));
+ };
+ //BA.debugLineNum = 269;BA.debugLine="If rs.RowCount = 0 Then";
+if (_rs.getRowCount()==0) { 
+ //BA.debugLineNum = 270;BA.debugLine="ToastMessageShow(\"No products found for your ven";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("No products found for your vendor."),anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 271;BA.debugLine="rs.Close";
+_rs.Close();
+ //BA.debugLineNum = 272;BA.debugLine="Return";
+if (true) return "";
+ };
+ //BA.debugLineNum = 275;BA.debugLine="Do While rs.NextRow";
 while (_rs.NextRow()) {
-RDebugUtils.currentLine=3080215;
- //BA.debugLineNum = 3080215;BA.debugLine="Dim pnl As Panel";
+ //BA.debugLineNum = 276;BA.debugLine="Dim pnl As Panel";
 _pnl = new anywheresoftware.b4a.objects.PanelWrapper();
-RDebugUtils.currentLine=3080216;
- //BA.debugLineNum = 3080216;BA.debugLine="pnl.Initialize(\"\")";
+ //BA.debugLineNum = 277;BA.debugLine="pnl.Initialize(\"\")";
 _pnl.Initialize(mostCurrent.activityBA,"");
-RDebugUtils.currentLine=3080217;
- //BA.debugLineNum = 3080217;BA.debugLine="pnl.SetLayout(0, 0, clvProducts.AsView.Width, 70";
+ //BA.debugLineNum = 278;BA.debugLine="pnl.SetLayout(0, 0, clvProducts.AsView.Width, 70";
 _pnl.SetLayout((int) (0),(int) (0),mostCurrent._clvproducts._asview().getWidth(),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (70)));
-RDebugUtils.currentLine=3080219;
- //BA.debugLineNum = 3080219;BA.debugLine="Dim lblName As Label";
+ //BA.debugLineNum = 280;BA.debugLine="Dim lblName As Label";
 _lblname = new anywheresoftware.b4a.objects.LabelWrapper();
-RDebugUtils.currentLine=3080220;
- //BA.debugLineNum = 3080220;BA.debugLine="lblName.Initialize(\"\")";
+ //BA.debugLineNum = 281;BA.debugLine="lblName.Initialize(\"\")";
 _lblname.Initialize(mostCurrent.activityBA,"");
-RDebugUtils.currentLine=3080221;
- //BA.debugLineNum = 3080221;BA.debugLine="lblName.Text = rs.GetString(\"item_name\")";
+ //BA.debugLineNum = 282;BA.debugLine="lblName.Text = rs.GetString(\"item_name\")";
 _lblname.setText(BA.ObjectToCharSequence(_rs.GetString("item_name")));
-RDebugUtils.currentLine=3080222;
- //BA.debugLineNum = 3080222;BA.debugLine="lblName.TextSize = 16";
+ //BA.debugLineNum = 283;BA.debugLine="lblName.TextSize = 16";
 _lblname.setTextSize((float) (16));
-RDebugUtils.currentLine=3080223;
- //BA.debugLineNum = 3080223;BA.debugLine="lblName.SetLayout(10dip, 5dip, 70%x, 25dip)";
+ //BA.debugLineNum = 284;BA.debugLine="lblName.SetLayout(10dip, 5dip, 70%x, 25dip)";
 _lblname.SetLayout(anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (10)),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (5)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (70),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (25)));
-RDebugUtils.currentLine=3080225;
- //BA.debugLineNum = 3080225;BA.debugLine="Dim lblPrice As Label";
+ //BA.debugLineNum = 286;BA.debugLine="Dim lblPrice As Label";
 _lblprice = new anywheresoftware.b4a.objects.LabelWrapper();
-RDebugUtils.currentLine=3080226;
- //BA.debugLineNum = 3080226;BA.debugLine="lblPrice.Initialize(\"\")";
+ //BA.debugLineNum = 287;BA.debugLine="lblPrice.Initialize(\"\")";
 _lblprice.Initialize(mostCurrent.activityBA,"");
-RDebugUtils.currentLine=3080227;
- //BA.debugLineNum = 3080227;BA.debugLine="lblPrice.Text = \"₱\" & rs.GetDouble(\"unit_price\")";
+ //BA.debugLineNum = 288;BA.debugLine="lblPrice.Text = \"₱\" & rs.GetDouble(\"unit_price\")";
 _lblprice.setText(BA.ObjectToCharSequence("₱"+BA.NumberToString(_rs.GetDouble("unit_price"))));
-RDebugUtils.currentLine=3080228;
- //BA.debugLineNum = 3080228;BA.debugLine="lblPrice.SetLayout(10dip, 30dip, 70%x, 20dip)";
+ //BA.debugLineNum = 289;BA.debugLine="lblPrice.SetLayout(10dip, 30dip, 70%x, 20dip)";
 _lblprice.SetLayout(anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (10)),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (30)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (70),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (20)));
-RDebugUtils.currentLine=3080230;
- //BA.debugLineNum = 3080230;BA.debugLine="Dim lblSku As Label";
+ //BA.debugLineNum = 291;BA.debugLine="Dim lblSku As Label";
 _lblsku = new anywheresoftware.b4a.objects.LabelWrapper();
-RDebugUtils.currentLine=3080231;
- //BA.debugLineNum = 3080231;BA.debugLine="lblSku.Initialize(\"\")";
+ //BA.debugLineNum = 292;BA.debugLine="lblSku.Initialize(\"\")";
 _lblsku.Initialize(mostCurrent.activityBA,"");
-RDebugUtils.currentLine=3080232;
- //BA.debugLineNum = 3080232;BA.debugLine="lblSku.Text = \"SKU: \" & rs.GetString(\"item_code\"";
+ //BA.debugLineNum = 293;BA.debugLine="lblSku.Text = \"SKU: \" & rs.GetString(\"item_code\"";
 _lblsku.setText(BA.ObjectToCharSequence("SKU: "+_rs.GetString("item_code")));
-RDebugUtils.currentLine=3080233;
- //BA.debugLineNum = 3080233;BA.debugLine="lblSku.TextSize = 12";
+ //BA.debugLineNum = 294;BA.debugLine="lblSku.TextSize = 12";
 _lblsku.setTextSize((float) (12));
-RDebugUtils.currentLine=3080234;
- //BA.debugLineNum = 3080234;BA.debugLine="lblSku.SetLayout(10dip, 50dip, 70%x, 15dip)";
+ //BA.debugLineNum = 295;BA.debugLine="lblSku.SetLayout(10dip, 50dip, 70%x, 15dip)";
 _lblsku.SetLayout(anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (10)),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (50)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (70),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (15)));
-RDebugUtils.currentLine=3080236;
- //BA.debugLineNum = 3080236;BA.debugLine="pnl.AddView(lblName, lblName.Left, lblName.Top,";
+ //BA.debugLineNum = 297;BA.debugLine="pnl.AddView(lblName, lblName.Left, lblName.Top,";
 _pnl.AddView((android.view.View)(_lblname.getObject()),_lblname.getLeft(),_lblname.getTop(),_lblname.getWidth(),_lblname.getHeight());
-RDebugUtils.currentLine=3080237;
- //BA.debugLineNum = 3080237;BA.debugLine="pnl.AddView(lblPrice, lblPrice.Left, lblPrice.To";
+ //BA.debugLineNum = 298;BA.debugLine="pnl.AddView(lblPrice, lblPrice.Left, lblPrice.To";
 _pnl.AddView((android.view.View)(_lblprice.getObject()),_lblprice.getLeft(),_lblprice.getTop(),_lblprice.getWidth(),_lblprice.getHeight());
-RDebugUtils.currentLine=3080238;
- //BA.debugLineNum = 3080238;BA.debugLine="pnl.AddView(lblSku, lblSku.Left, lblSku.Top, lbl";
+ //BA.debugLineNum = 299;BA.debugLine="pnl.AddView(lblSku, lblSku.Left, lblSku.Top, lbl";
 _pnl.AddView((android.view.View)(_lblsku.getObject()),_lblsku.getLeft(),_lblsku.getTop(),_lblsku.getWidth(),_lblsku.getHeight());
-RDebugUtils.currentLine=3080240;
- //BA.debugLineNum = 3080240;BA.debugLine="clvProducts.Add(pnl, rs.GetInt(\"item_id\"))";
+ //BA.debugLineNum = 301;BA.debugLine="clvProducts.Add(pnl, rs.GetInt(\"item_id\"))";
 mostCurrent._clvproducts._add((anywheresoftware.b4a.objects.B4XViewWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.B4XViewWrapper(), (java.lang.Object)(_pnl.getObject())),(Object)(_rs.GetInt("item_id")));
  }
 ;
-RDebugUtils.currentLine=3080242;
- //BA.debugLineNum = 3080242;BA.debugLine="rs.Close";
+ //BA.debugLineNum = 304;BA.debugLine="rs.Close";
 _rs.Close();
-RDebugUtils.currentLine=3080243;
- //BA.debugLineNum = 3080243;BA.debugLine="End Sub";
-return "";
-}
-public static String  _activity_pause(boolean _userclosed) throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-RDebugUtils.currentLine=2490368;
- //BA.debugLineNum = 2490368;BA.debugLine="Sub Activity_Pause(UserClosed As Boolean)";
-RDebugUtils.currentLine=2490369;
- //BA.debugLineNum = 2490369;BA.debugLine="End Sub";
-return "";
-}
-public static String  _activity_resume() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "activity_resume", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "activity_resume", null));}
-RDebugUtils.currentLine=2424832;
- //BA.debugLineNum = 2424832;BA.debugLine="Sub Activity_Resume";
-RDebugUtils.currentLine=2424833;
- //BA.debugLineNum = 2424833;BA.debugLine="End Sub";
-return "";
-}
-public static String  _bttnadd_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "bttnadd_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "bttnadd_click", null));}
-int _currentqty = 0;
-RDebugUtils.currentLine=7798784;
- //BA.debugLineNum = 7798784;BA.debugLine="Private Sub bttnAdd_Click";
-RDebugUtils.currentLine=7798785;
- //BA.debugLineNum = 7798785;BA.debugLine="Dim currentQty As Int = lblQuantityValue.Text";
-_currentqty = (int)(Double.parseDouble(mostCurrent._lblquantityvalue.getText()));
-RDebugUtils.currentLine=7798786;
- //BA.debugLineNum = 7798786;BA.debugLine="If currentQty < 999 Then";
-if (_currentqty<999) { 
-RDebugUtils.currentLine=7798787;
- //BA.debugLineNum = 7798787;BA.debugLine="lblQuantityValue.Text = (currentQty + 1)";
-mostCurrent._lblquantityvalue.setText(BA.ObjectToCharSequence((_currentqty+1)));
- }else {
-RDebugUtils.currentLine=7798789;
- //BA.debugLineNum = 7798789;BA.debugLine="ToastMessageShow(\"Maximum quantity is 999\", Fals";
-anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Maximum quantity is 999"),anywheresoftware.b4a.keywords.Common.False);
- };
-RDebugUtils.currentLine=7798791;
- //BA.debugLineNum = 7798791;BA.debugLine="End Sub";
-return "";
-}
-public static String  _bttnaddorderactivity_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "bttnaddorderactivity_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "bttnaddorderactivity_click", null));}
-RDebugUtils.currentLine=2555904;
- //BA.debugLineNum = 2555904;BA.debugLine="Private Sub bttnAddOrderActivity_Click";
-RDebugUtils.currentLine=2555905;
- //BA.debugLineNum = 2555905;BA.debugLine="pnlDim.Visible = True";
-mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.True);
-RDebugUtils.currentLine=2555906;
- //BA.debugLineNum = 2555906;BA.debugLine="pnlSelectItems.Visible = True";
-mostCurrent._pnlselectitems.setVisible(anywheresoftware.b4a.keywords.Common.True);
-RDebugUtils.currentLine=2555907;
- //BA.debugLineNum = 2555907;BA.debugLine="pnlDim.BringToFront";
-mostCurrent._pnldim.BringToFront();
-RDebugUtils.currentLine=2555908;
- //BA.debugLineNum = 2555908;BA.debugLine="pnlSelectItems.BringToFront";
-mostCurrent._pnlselectitems.BringToFront();
-RDebugUtils.currentLine=2555909;
- //BA.debugLineNum = 2555909;BA.debugLine="End Sub";
-return "";
-}
-public static String  _bttnaddtocartqty_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "bttnaddtocartqty_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "bttnaddtocartqty_click", null));}
-int _quantity = 0;
-int _i = 0;
-RDebugUtils.currentLine=7667712;
- //BA.debugLineNum = 7667712;BA.debugLine="Private Sub bttnAddToCartQty_Click";
-RDebugUtils.currentLine=7667713;
- //BA.debugLineNum = 7667713;BA.debugLine="Dim quantity As Int = lblQuantityValue.Text";
-_quantity = (int)(Double.parseDouble(mostCurrent._lblquantityvalue.getText()));
-RDebugUtils.currentLine=7667716;
- //BA.debugLineNum = 7667716;BA.debugLine="For i = 1 To quantity";
-{
-final int step2 = 1;
-final int limit2 = _quantity;
-_i = (int) (1) ;
-for (;_i <= limit2 ;_i = _i + step2 ) {
-RDebugUtils.currentLine=7667717;
- //BA.debugLineNum = 7667717;BA.debugLine="CartItems.Add(SelectedItemID)";
-mostCurrent._cartitems.Add((Object)(_selecteditemid));
- }
-};
-RDebugUtils.currentLine=7667720;
- //BA.debugLineNum = 7667720;BA.debugLine="RefreshCartSummary";
-_refreshcartsummary();
-RDebugUtils.currentLine=7667721;
- //BA.debugLineNum = 7667721;BA.debugLine="bttnPurchaseNow.Enabled = True";
-mostCurrent._bttnpurchasenow.setEnabled(anywheresoftware.b4a.keywords.Common.True);
-RDebugUtils.currentLine=7667722;
- //BA.debugLineNum = 7667722;BA.debugLine="bttnPurchaseNow.Color = Colors.Blue";
-mostCurrent._bttnpurchasenow.setColor(anywheresoftware.b4a.keywords.Common.Colors.Blue);
-RDebugUtils.currentLine=7667724;
- //BA.debugLineNum = 7667724;BA.debugLine="ToastMessageShow(\"Added \" & quantity & \"x \" & Sel";
-anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Added "+BA.NumberToString(_quantity)+"x "+mostCurrent._selecteditemname),anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=7667727;
- //BA.debugLineNum = 7667727;BA.debugLine="pnlQuantity.Visible = False";
-mostCurrent._pnlquantity.setVisible(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=7667728;
- //BA.debugLineNum = 7667728;BA.debugLine="pnlDim.Visible = False";
-mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=7667729;
- //BA.debugLineNum = 7667729;BA.debugLine="pnlSelectItems.Visible = False";
-mostCurrent._pnlselectitems.setVisible(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=7667730;
- //BA.debugLineNum = 7667730;BA.debugLine="End Sub";
-return "";
-}
-public static String  _refreshcartsummary() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "refreshcartsummary", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "refreshcartsummary", null));}
-int _top = 0;
-double _totalamount = 0;
-anywheresoftware.b4a.objects.collections.Map _itemquantities = null;
-int _itemid = 0;
-int _count = 0;
-int _quantity = 0;
-anywheresoftware.b4a.sql.SQL.ResultSetWrapper _rs = null;
-anywheresoftware.b4a.objects.PanelWrapper _pnl = null;
-anywheresoftware.b4a.objects.LabelWrapper _lblname = null;
-anywheresoftware.b4a.objects.LabelWrapper _lblqty = null;
-anywheresoftware.b4a.objects.LabelWrapper _lblprice = null;
-double _itemprice = 0;
-double _linetotal = 0;
-RDebugUtils.currentLine=2949120;
- //BA.debugLineNum = 2949120;BA.debugLine="Private Sub RefreshCartSummary";
-RDebugUtils.currentLine=2949121;
- //BA.debugLineNum = 2949121;BA.debugLine="svCartSummary.Panel.RemoveAllViews";
-mostCurrent._svcartsummary.getPanel().RemoveAllViews();
-RDebugUtils.currentLine=2949122;
- //BA.debugLineNum = 2949122;BA.debugLine="Dim top As Int = 0";
-_top = (int) (0);
-RDebugUtils.currentLine=2949123;
- //BA.debugLineNum = 2949123;BA.debugLine="Dim totalAmount As Double = 0";
-_totalamount = 0;
-RDebugUtils.currentLine=2949126;
- //BA.debugLineNum = 2949126;BA.debugLine="Dim itemQuantities As Map";
-_itemquantities = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=2949127;
- //BA.debugLineNum = 2949127;BA.debugLine="itemQuantities.Initialize";
-_itemquantities.Initialize();
-RDebugUtils.currentLine=2949129;
- //BA.debugLineNum = 2949129;BA.debugLine="For Each itemID As Int In CartItems";
-{
-final anywheresoftware.b4a.BA.IterableList group6 = mostCurrent._cartitems;
-final int groupLen6 = group6.getSize()
-;int index6 = 0;
-;
-for (; index6 < groupLen6;index6++){
-_itemid = (int)(BA.ObjectToNumber(group6.Get(index6)));
-RDebugUtils.currentLine=2949130;
- //BA.debugLineNum = 2949130;BA.debugLine="If itemQuantities.ContainsKey(itemID) Then";
-if (_itemquantities.ContainsKey((Object)(_itemid))) { 
-RDebugUtils.currentLine=2949131;
- //BA.debugLineNum = 2949131;BA.debugLine="Dim count As Int = itemQuantities.Get(itemID)";
-_count = (int)(BA.ObjectToNumber(_itemquantities.Get((Object)(_itemid))));
-RDebugUtils.currentLine=2949132;
- //BA.debugLineNum = 2949132;BA.debugLine="itemQuantities.Put(itemID, count + 1)";
-_itemquantities.Put((Object)(_itemid),(Object)(_count+1));
- }else {
-RDebugUtils.currentLine=2949134;
- //BA.debugLineNum = 2949134;BA.debugLine="itemQuantities.Put(itemID, 1)";
-_itemquantities.Put((Object)(_itemid),(Object)(1));
- };
- }
-};
-RDebugUtils.currentLine=2949139;
- //BA.debugLineNum = 2949139;BA.debugLine="For Each itemID As Int In itemQuantities.Keys";
-{
-final anywheresoftware.b4a.BA.IterableList group14 = _itemquantities.Keys();
-final int groupLen14 = group14.getSize()
-;int index14 = 0;
-;
-for (; index14 < groupLen14;index14++){
-_itemid = (int)(BA.ObjectToNumber(group14.Get(index14)));
-RDebugUtils.currentLine=2949140;
- //BA.debugLineNum = 2949140;BA.debugLine="Dim quantity As Int = itemQuantities.Get(itemID)";
-_quantity = (int)(BA.ObjectToNumber(_itemquantities.Get((Object)(_itemid))));
-RDebugUtils.currentLine=2949142;
- //BA.debugLineNum = 2949142;BA.debugLine="Dim rs As ResultSet = Main.SQLProducts.ExecQuery";
-_rs = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
-_rs = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery2("SELECT * FROM items WHERE item_id=?",new String[]{BA.NumberToString(_itemid)})));
-RDebugUtils.currentLine=2949143;
- //BA.debugLineNum = 2949143;BA.debugLine="If rs.NextRow Then";
-if (_rs.NextRow()) { 
-RDebugUtils.currentLine=2949144;
- //BA.debugLineNum = 2949144;BA.debugLine="Dim pnl As Panel";
-_pnl = new anywheresoftware.b4a.objects.PanelWrapper();
-RDebugUtils.currentLine=2949145;
- //BA.debugLineNum = 2949145;BA.debugLine="pnl.Initialize(\"\")";
-_pnl.Initialize(mostCurrent.activityBA,"");
-RDebugUtils.currentLine=2949146;
- //BA.debugLineNum = 2949146;BA.debugLine="pnl.Color = Colors.White";
-_pnl.setColor(anywheresoftware.b4a.keywords.Common.Colors.White);
-RDebugUtils.currentLine=2949147;
- //BA.debugLineNum = 2949147;BA.debugLine="pnl.SetLayout(0, top, svCartSummary.Width, 65di";
-_pnl.SetLayout((int) (0),_top,mostCurrent._svcartsummary.getWidth(),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (65)));
-RDebugUtils.currentLine=2949149;
- //BA.debugLineNum = 2949149;BA.debugLine="Dim lblName As Label";
-_lblname = new anywheresoftware.b4a.objects.LabelWrapper();
-RDebugUtils.currentLine=2949150;
- //BA.debugLineNum = 2949150;BA.debugLine="lblName.Initialize(\"\")";
-_lblname.Initialize(mostCurrent.activityBA,"");
-RDebugUtils.currentLine=2949151;
- //BA.debugLineNum = 2949151;BA.debugLine="lblName.Text = rs.GetString(\"item_name\")";
-_lblname.setText(BA.ObjectToCharSequence(_rs.GetString("item_name")));
-RDebugUtils.currentLine=2949152;
- //BA.debugLineNum = 2949152;BA.debugLine="lblName.TextSize = 16";
-_lblname.setTextSize((float) (16));
-RDebugUtils.currentLine=2949153;
- //BA.debugLineNum = 2949153;BA.debugLine="lblName.TextColor = Colors.Black";
-_lblname.setTextColor(anywheresoftware.b4a.keywords.Common.Colors.Black);
-RDebugUtils.currentLine=2949154;
- //BA.debugLineNum = 2949154;BA.debugLine="lblName.SetLayout(10dip, 5dip, 60%x, 25dip)";
-_lblname.SetLayout(anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (10)),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (5)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (60),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (25)));
-RDebugUtils.currentLine=2949156;
- //BA.debugLineNum = 2949156;BA.debugLine="Dim lblQty As Label";
-_lblqty = new anywheresoftware.b4a.objects.LabelWrapper();
-RDebugUtils.currentLine=2949157;
- //BA.debugLineNum = 2949157;BA.debugLine="lblQty.Initialize(\"\")";
-_lblqty.Initialize(mostCurrent.activityBA,"");
-RDebugUtils.currentLine=2949158;
- //BA.debugLineNum = 2949158;BA.debugLine="lblQty.Text = \"x\" & quantity";
-_lblqty.setText(BA.ObjectToCharSequence("x"+BA.NumberToString(_quantity)));
-RDebugUtils.currentLine=2949159;
- //BA.debugLineNum = 2949159;BA.debugLine="lblQty.TextSize = 14";
-_lblqty.setTextSize((float) (14));
-RDebugUtils.currentLine=2949160;
- //BA.debugLineNum = 2949160;BA.debugLine="lblQty.TextColor = Colors.Gray";
-_lblqty.setTextColor(anywheresoftware.b4a.keywords.Common.Colors.Gray);
-RDebugUtils.currentLine=2949161;
- //BA.debugLineNum = 2949161;BA.debugLine="lblQty.SetLayout(10dip, 30dip, 30%x, 20dip)";
-_lblqty.SetLayout(anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (10)),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (30)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (30),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (20)));
-RDebugUtils.currentLine=2949163;
- //BA.debugLineNum = 2949163;BA.debugLine="Dim lblPrice As Label";
-_lblprice = new anywheresoftware.b4a.objects.LabelWrapper();
-RDebugUtils.currentLine=2949164;
- //BA.debugLineNum = 2949164;BA.debugLine="lblPrice.Initialize(\"\")";
-_lblprice.Initialize(mostCurrent.activityBA,"");
-RDebugUtils.currentLine=2949165;
- //BA.debugLineNum = 2949165;BA.debugLine="Dim itemPrice As Double = rs.GetDouble(\"unit_pr";
-_itemprice = _rs.GetDouble("unit_price");
-RDebugUtils.currentLine=2949166;
- //BA.debugLineNum = 2949166;BA.debugLine="Dim lineTotal As Double = itemPrice * quantity";
-_linetotal = _itemprice*_quantity;
-RDebugUtils.currentLine=2949167;
- //BA.debugLineNum = 2949167;BA.debugLine="lblPrice.Text = \"₱\" & lineTotal";
-_lblprice.setText(BA.ObjectToCharSequence("₱"+BA.NumberToString(_linetotal)));
-RDebugUtils.currentLine=2949168;
- //BA.debugLineNum = 2949168;BA.debugLine="lblPrice.TextSize = 16";
-_lblprice.setTextSize((float) (16));
-RDebugUtils.currentLine=2949169;
- //BA.debugLineNum = 2949169;BA.debugLine="lblPrice.TextColor = Colors.RGB(0, 120, 0)";
-_lblprice.setTextColor(anywheresoftware.b4a.keywords.Common.Colors.RGB((int) (0),(int) (120),(int) (0)));
-RDebugUtils.currentLine=2949170;
- //BA.debugLineNum = 2949170;BA.debugLine="lblPrice.Gravity = Gravity.RIGHT";
-_lblprice.setGravity(anywheresoftware.b4a.keywords.Common.Gravity.RIGHT);
-RDebugUtils.currentLine=2949171;
- //BA.debugLineNum = 2949171;BA.debugLine="lblPrice.SetLayout(65%x, 5dip, 30%x, 25dip)";
-_lblprice.SetLayout(anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (65),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (5)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (30),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (25)));
-RDebugUtils.currentLine=2949173;
- //BA.debugLineNum = 2949173;BA.debugLine="pnl.AddView(lblName, lblName.Left, lblName.Top,";
-_pnl.AddView((android.view.View)(_lblname.getObject()),_lblname.getLeft(),_lblname.getTop(),_lblname.getWidth(),_lblname.getHeight());
-RDebugUtils.currentLine=2949174;
- //BA.debugLineNum = 2949174;BA.debugLine="pnl.AddView(lblQty, lblQty.Left, lblQty.Top, lb";
-_pnl.AddView((android.view.View)(_lblqty.getObject()),_lblqty.getLeft(),_lblqty.getTop(),_lblqty.getWidth(),_lblqty.getHeight());
-RDebugUtils.currentLine=2949175;
- //BA.debugLineNum = 2949175;BA.debugLine="pnl.AddView(lblPrice, lblPrice.Left, lblPrice.T";
-_pnl.AddView((android.view.View)(_lblprice.getObject()),_lblprice.getLeft(),_lblprice.getTop(),_lblprice.getWidth(),_lblprice.getHeight());
-RDebugUtils.currentLine=2949177;
- //BA.debugLineNum = 2949177;BA.debugLine="svCartSummary.Panel.AddView(pnl, 0, top, pnl.Wi";
-mostCurrent._svcartsummary.getPanel().AddView((android.view.View)(_pnl.getObject()),(int) (0),_top,_pnl.getWidth(),_pnl.getHeight());
-RDebugUtils.currentLine=2949178;
- //BA.debugLineNum = 2949178;BA.debugLine="top = top + pnl.Height + 3dip";
-_top = (int) (_top+_pnl.getHeight()+anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (3)));
-RDebugUtils.currentLine=2949179;
- //BA.debugLineNum = 2949179;BA.debugLine="totalAmount = totalAmount + lineTotal";
-_totalamount = _totalamount+_linetotal;
- };
-RDebugUtils.currentLine=2949181;
- //BA.debugLineNum = 2949181;BA.debugLine="rs.Close";
-_rs.Close();
- }
-};
-RDebugUtils.currentLine=2949184;
- //BA.debugLineNum = 2949184;BA.debugLine="svCartSummary.Panel.Height = top";
-mostCurrent._svcartsummary.getPanel().setHeight(_top);
-RDebugUtils.currentLine=2949185;
- //BA.debugLineNum = 2949185;BA.debugLine="lblTotalItems.Text = \"Items: \" & itemQuantities.S";
-mostCurrent._lbltotalitems.setText(BA.ObjectToCharSequence("Items: "+BA.NumberToString(_itemquantities.getSize())+" types ("+BA.NumberToString(mostCurrent._cartitems.getSize())+" total)"));
-RDebugUtils.currentLine=2949186;
- //BA.debugLineNum = 2949186;BA.debugLine="lblTotalAmount.Text = \"Total: ₱\" & NumberFormat2(";
-mostCurrent._lbltotalamount.setText(BA.ObjectToCharSequence("Total: ₱"+anywheresoftware.b4a.keywords.Common.NumberFormat2(_totalamount,(int) (1),(int) (2),(int) (2),anywheresoftware.b4a.keywords.Common.False)));
-RDebugUtils.currentLine=2949187;
- //BA.debugLineNum = 2949187;BA.debugLine="End Sub";
-return "";
-}
-public static String  _bttncancelqty_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "bttncancelqty_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "bttncancelqty_click", null));}
-RDebugUtils.currentLine=7733248;
- //BA.debugLineNum = 7733248;BA.debugLine="Private Sub bttnCancelQty_Click";
-RDebugUtils.currentLine=7733249;
- //BA.debugLineNum = 7733249;BA.debugLine="pnlQuantity.Visible = False";
-mostCurrent._pnlquantity.setVisible(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=7733251;
- //BA.debugLineNum = 7733251;BA.debugLine="pnlDim.Visible = False";
-mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=7733252;
- //BA.debugLineNum = 7733252;BA.debugLine="End Sub";
-return "";
-}
-public static String  _bttnminus_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "bttnminus_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "bttnminus_click", null));}
-int _currentqty = 0;
-RDebugUtils.currentLine=7536640;
- //BA.debugLineNum = 7536640;BA.debugLine="Private Sub bttnMinus_Click";
-RDebugUtils.currentLine=7536641;
- //BA.debugLineNum = 7536641;BA.debugLine="Dim currentQty As Int = lblQuantityValue.Text";
-_currentqty = (int)(Double.parseDouble(mostCurrent._lblquantityvalue.getText()));
-RDebugUtils.currentLine=7536642;
- //BA.debugLineNum = 7536642;BA.debugLine="If currentQty > 1 Then";
-if (_currentqty>1) { 
-RDebugUtils.currentLine=7536643;
- //BA.debugLineNum = 7536643;BA.debugLine="lblQuantityValue.Text = (currentQty - 1)";
-mostCurrent._lblquantityvalue.setText(BA.ObjectToCharSequence((_currentqty-1)));
- }else {
-RDebugUtils.currentLine=7536645;
- //BA.debugLineNum = 7536645;BA.debugLine="ToastMessageShow(\"Minimum quantity is 1\", False)";
-anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Minimum quantity is 1"),anywheresoftware.b4a.keywords.Common.False);
- };
-RDebugUtils.currentLine=7536647;
- //BA.debugLineNum = 7536647;BA.debugLine="End Sub";
-return "";
-}
-public static String  _bttnpurchasenow_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "bttnpurchasenow_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "bttnpurchasenow_click", null));}
-RDebugUtils.currentLine=2752512;
- //BA.debugLineNum = 2752512;BA.debugLine="Private Sub bttnPurchaseNow_Click";
-RDebugUtils.currentLine=2752513;
- //BA.debugLineNum = 2752513;BA.debugLine="If CartItems.Size = 0 Then";
-if (mostCurrent._cartitems.getSize()==0) { 
-RDebugUtils.currentLine=2752514;
- //BA.debugLineNum = 2752514;BA.debugLine="ToastMessageShow(\"Add items first\", True)";
-anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Add items first"),anywheresoftware.b4a.keywords.Common.True);
-RDebugUtils.currentLine=2752515;
- //BA.debugLineNum = 2752515;BA.debugLine="Return";
-if (true) return "";
- };
-RDebugUtils.currentLine=2752518;
- //BA.debugLineNum = 2752518;BA.debugLine="SaveOrderLocally";
-_saveorderlocally();
-RDebugUtils.currentLine=2752519;
- //BA.debugLineNum = 2752519;BA.debugLine="CartItems.Clear";
-mostCurrent._cartitems.Clear();
-RDebugUtils.currentLine=2752520;
- //BA.debugLineNum = 2752520;BA.debugLine="RefreshCartSummary";
-_refreshcartsummary();
-RDebugUtils.currentLine=2752521;
- //BA.debugLineNum = 2752521;BA.debugLine="bttnPurchaseNow.Color = Colors.ARGB(80, 200, 200,";
-mostCurrent._bttnpurchasenow.setColor(anywheresoftware.b4a.keywords.Common.Colors.ARGB((int) (80),(int) (200),(int) (200),(int) (200)));
-RDebugUtils.currentLine=2752522;
- //BA.debugLineNum = 2752522;BA.debugLine="bttnPurchaseNow.Enabled = False";
-mostCurrent._bttnpurchasenow.setEnabled(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=2752524;
- //BA.debugLineNum = 2752524;BA.debugLine="ToastMessageShow(\"Order added successfully\", Fals";
-anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Order added successfully"),anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=2752525;
- //BA.debugLineNum = 2752525;BA.debugLine="Activity.Finish";
-mostCurrent._activity.Finish();
-RDebugUtils.currentLine=2752526;
- //BA.debugLineNum = 2752526;BA.debugLine="End Sub";
-return "";
-}
-public static String  _saveorderlocally() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "saveorderlocally", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "saveorderlocally", null));}
-double _total = 0;
-int _productid = 0;
-anywheresoftware.b4a.sql.SQL.ResultSetWrapper _rs = null;
-anywheresoftware.b4a.sql.SQL.ResultSetWrapper _rsorder = null;
-int _orderid = 0;
-double _price = 0;
-RDebugUtils.currentLine=3014656;
- //BA.debugLineNum = 3014656;BA.debugLine="Private Sub SaveOrderLocally";
-RDebugUtils.currentLine=3014657;
- //BA.debugLineNum = 3014657;BA.debugLine="Dim total As Double = 0";
-_total = 0;
-RDebugUtils.currentLine=3014658;
- //BA.debugLineNum = 3014658;BA.debugLine="For Each productID As Int In CartItems";
-{
-final anywheresoftware.b4a.BA.IterableList group2 = mostCurrent._cartitems;
-final int groupLen2 = group2.getSize()
-;int index2 = 0;
-;
-for (; index2 < groupLen2;index2++){
-_productid = (int)(BA.ObjectToNumber(group2.Get(index2)));
-RDebugUtils.currentLine=3014659;
- //BA.debugLineNum = 3014659;BA.debugLine="Dim rs As ResultSet = Main.SQLProducts.ExecQuery";
-_rs = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
-_rs = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery2("SELECT * FROM items WHERE item_id=?",new String[]{BA.NumberToString(_productid)})));
-RDebugUtils.currentLine=3014660;
- //BA.debugLineNum = 3014660;BA.debugLine="If rs.NextRow Then total = total + rs.GetDouble(";
-if (_rs.NextRow()) { 
-_total = _total+_rs.GetDouble("unit_price");};
-RDebugUtils.currentLine=3014661;
- //BA.debugLineNum = 3014661;BA.debugLine="rs.Close";
-_rs.Close();
- }
-};
-RDebugUtils.currentLine=3014665;
- //BA.debugLineNum = 3014665;BA.debugLine="Main.SQLProducts.ExecNonQuery2(\"INSERT INTO order";
-mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecNonQuery2("INSERT INTO orders (vendor_id, date_created, status, total_amount) VALUES (?, ?, ?, ?)",anywheresoftware.b4a.keywords.Common.ArrayToList(new String[]{BA.NumberToString(1),BA.NumberToString(anywheresoftware.b4a.keywords.Common.DateTime.getNow()),"Pending",BA.NumberToString(_total)}));
-RDebugUtils.currentLine=3014669;
- //BA.debugLineNum = 3014669;BA.debugLine="Dim rsOrder As ResultSet = Main.SQLProducts.ExecQ";
-_rsorder = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
-_rsorder = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery("SELECT last_insert_rowid() AS id")));
-RDebugUtils.currentLine=3014670;
- //BA.debugLineNum = 3014670;BA.debugLine="rsOrder.NextRow";
-_rsorder.NextRow();
-RDebugUtils.currentLine=3014671;
- //BA.debugLineNum = 3014671;BA.debugLine="Dim orderID As Int = rsOrder.GetInt(\"id\")";
-_orderid = _rsorder.GetInt("id");
-RDebugUtils.currentLine=3014672;
- //BA.debugLineNum = 3014672;BA.debugLine="rsOrder.Close";
-_rsorder.Close();
-RDebugUtils.currentLine=3014675;
- //BA.debugLineNum = 3014675;BA.debugLine="For Each productID As Int In CartItems";
-{
-final anywheresoftware.b4a.BA.IterableList group12 = mostCurrent._cartitems;
-final int groupLen12 = group12.getSize()
-;int index12 = 0;
-;
-for (; index12 < groupLen12;index12++){
-_productid = (int)(BA.ObjectToNumber(group12.Get(index12)));
-RDebugUtils.currentLine=3014676;
- //BA.debugLineNum = 3014676;BA.debugLine="Dim rs As ResultSet = Main.SQLProducts.ExecQuery";
-_rs = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
-_rs = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery2("SELECT * FROM items WHERE item_id=?",new String[]{BA.NumberToString(_productid)})));
-RDebugUtils.currentLine=3014677;
- //BA.debugLineNum = 3014677;BA.debugLine="If rs.NextRow Then";
-if (_rs.NextRow()) { 
-RDebugUtils.currentLine=3014678;
- //BA.debugLineNum = 3014678;BA.debugLine="Dim price As Double = rs.GetDouble(\"unit_price\"";
-_price = _rs.GetDouble("unit_price");
-RDebugUtils.currentLine=3014679;
- //BA.debugLineNum = 3014679;BA.debugLine="Main.SQLProducts.ExecNonQuery2(\"INSERT INTO ord";
-mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecNonQuery2("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",anywheresoftware.b4a.keywords.Common.ArrayToList(new String[]{BA.NumberToString(_orderid),BA.NumberToString(_productid),BA.NumberToString(1),BA.NumberToString(_price)}));
- };
-RDebugUtils.currentLine=3014682;
- //BA.debugLineNum = 3014682;BA.debugLine="rs.Close";
-_rs.Close();
- }
-};
-RDebugUtils.currentLine=3014684;
- //BA.debugLineNum = 3014684;BA.debugLine="End Sub";
-return "";
-}
-public static String  _clvproducts_itemclick(int _index,Object _value) throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "clvproducts_itemclick", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "clvproducts_itemclick", new Object[] {_index,_value}));}
-int _itemid = 0;
-anywheresoftware.b4a.sql.SQL.ResultSetWrapper _rs = null;
-RDebugUtils.currentLine=2883584;
- //BA.debugLineNum = 2883584;BA.debugLine="Private Sub clvProducts_ItemClick(Index As Int, Va";
-RDebugUtils.currentLine=2883585;
- //BA.debugLineNum = 2883585;BA.debugLine="Dim itemID As Int = Value";
-_itemid = (int)(BA.ObjectToNumber(_value));
-RDebugUtils.currentLine=2883588;
- //BA.debugLineNum = 2883588;BA.debugLine="Dim rs As ResultSet = Main.SQLProducts.ExecQuery2";
-_rs = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
-_rs = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery2("SELECT * FROM items WHERE item_id=?",new String[]{BA.NumberToString(_itemid)})));
-RDebugUtils.currentLine=2883590;
- //BA.debugLineNum = 2883590;BA.debugLine="If rs.NextRow Then";
-if (_rs.NextRow()) { 
-RDebugUtils.currentLine=2883592;
- //BA.debugLineNum = 2883592;BA.debugLine="SelectedItemID = itemID";
-_selecteditemid = _itemid;
-RDebugUtils.currentLine=2883593;
- //BA.debugLineNum = 2883593;BA.debugLine="SelectedItemName = rs.GetString(\"item_name\")";
-mostCurrent._selecteditemname = _rs.GetString("item_name");
-RDebugUtils.currentLine=2883594;
- //BA.debugLineNum = 2883594;BA.debugLine="SelectedItemPrice = rs.GetDouble(\"unit_price\")";
-_selecteditemprice = _rs.GetDouble("unit_price");
-RDebugUtils.currentLine=2883597;
- //BA.debugLineNum = 2883597;BA.debugLine="lblSelectedItem.Text = SelectedItemName & Chr(10";
-mostCurrent._lblselecteditem.setText(BA.ObjectToCharSequence(mostCurrent._selecteditemname+BA.ObjectToString(anywheresoftware.b4a.keywords.Common.Chr((int) (10)))+"₱"+BA.NumberToString(_selecteditemprice)));
-RDebugUtils.currentLine=2883598;
- //BA.debugLineNum = 2883598;BA.debugLine="lblQuantityValue.Text = \"1\"  ' Reset to 1";
-mostCurrent._lblquantityvalue.setText(BA.ObjectToCharSequence("1"));
-RDebugUtils.currentLine=2883601;
- //BA.debugLineNum = 2883601;BA.debugLine="pnlQuantity.Visible = True";
-mostCurrent._pnlquantity.setVisible(anywheresoftware.b4a.keywords.Common.True);
-RDebugUtils.currentLine=2883602;
- //BA.debugLineNum = 2883602;BA.debugLine="pnlQuantity.BringToFront";
-mostCurrent._pnlquantity.BringToFront();
-RDebugUtils.currentLine=2883603;
- //BA.debugLineNum = 2883603;BA.debugLine="pnlDim.Visible = True";
-mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.True);
-RDebugUtils.currentLine=2883604;
- //BA.debugLineNum = 2883604;BA.debugLine="pnlDim.BringToFront";
-mostCurrent._pnldim.BringToFront();
-RDebugUtils.currentLine=2883605;
- //BA.debugLineNum = 2883605;BA.debugLine="pnlQuantity.BringToFront  ' Make sure it's on to";
-mostCurrent._pnlquantity.BringToFront();
- };
-RDebugUtils.currentLine=2883607;
- //BA.debugLineNum = 2883607;BA.debugLine="rs.Close";
-_rs.Close();
-RDebugUtils.currentLine=2883608;
- //BA.debugLineNum = 2883608;BA.debugLine="End Sub";
-return "";
-}
-public static String  _etsearchproducts_textchanged(String _old,String _new) throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "etsearchproducts_textchanged", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "etsearchproducts_textchanged", new Object[] {_old,_new}));}
-RDebugUtils.currentLine=7864320;
- //BA.debugLineNum = 7864320;BA.debugLine="Private Sub etSearchProducts_TextChanged (Old As S";
-RDebugUtils.currentLine=7864321;
- //BA.debugLineNum = 7864321;BA.debugLine="LoadProducts  ' Reload with filter";
-_loadproducts();
-RDebugUtils.currentLine=7864322;
- //BA.debugLineNum = 7864322;BA.debugLine="End Sub";
-return "";
-}
-public static String  _lblexitorderactivity_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "lblexitorderactivity_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "lblexitorderactivity_click", null));}
-RDebugUtils.currentLine=2686976;
- //BA.debugLineNum = 2686976;BA.debugLine="Private Sub lblExitOrderActivity_Click";
-RDebugUtils.currentLine=2686977;
- //BA.debugLineNum = 2686977;BA.debugLine="Activity.Finish";
-mostCurrent._activity.Finish();
-RDebugUtils.currentLine=2686978;
- //BA.debugLineNum = 2686978;BA.debugLine="End Sub";
-return "";
-}
-public static String  _lblexitselectitems_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "lblexitselectitems_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "lblexitselectitems_click", null));}
-RDebugUtils.currentLine=2621440;
- //BA.debugLineNum = 2621440;BA.debugLine="Private Sub lblExitSelectItems_Click";
-RDebugUtils.currentLine=2621441;
- //BA.debugLineNum = 2621441;BA.debugLine="pnlDim.Visible = False";
-mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=2621442;
- //BA.debugLineNum = 2621442;BA.debugLine="pnlSelectItems.Visible = False";
-mostCurrent._pnlselectitems.setVisible(anywheresoftware.b4a.keywords.Common.False);
-RDebugUtils.currentLine=2621443;
- //BA.debugLineNum = 2621443;BA.debugLine="End Sub";
+ //BA.debugLineNum = 305;BA.debugLine="End Sub";
 return "";
 }
 public static String  _pnldim_click() throws Exception{
-RDebugUtils.currentModule="addorderactivity";
-if (Debug.shouldDelegate(mostCurrent.activityBA, "pnldim_click", false))
-	 {return ((String) Debug.delegate(mostCurrent.activityBA, "pnldim_click", null));}
-RDebugUtils.currentLine=2818048;
- //BA.debugLineNum = 2818048;BA.debugLine="Private Sub pnlDim_Click";
-RDebugUtils.currentLine=2818049;
- //BA.debugLineNum = 2818049;BA.debugLine="End Sub";
+ //BA.debugLineNum = 233;BA.debugLine="Private Sub pnlDim_Click";
+ //BA.debugLineNum = 234;BA.debugLine="End Sub";
+return "";
+}
+public static String  _process_globals() throws Exception{
+ //BA.debugLineNum = 6;BA.debugLine="Sub Process_Globals";
+ //BA.debugLineNum = 7;BA.debugLine="Private xui As XUI";
+_xui = new anywheresoftware.b4a.objects.B4XViewWrapper.XUI();
+ //BA.debugLineNum = 8;BA.debugLine="End Sub";
+return "";
+}
+public static String  _rbnotpaidbooked_checkedchange(boolean _checked) throws Exception{
+ //BA.debugLineNum = 214;BA.debugLine="Private Sub rbNotPaidBooked_CheckedChange(Checked";
+ //BA.debugLineNum = 215;BA.debugLine="If Checked = False Then Return";
+if (_checked==anywheresoftware.b4a.keywords.Common.False) { 
+if (true) return "";};
+ //BA.debugLineNum = 216;BA.debugLine="rbPaidReceived.Checked = False";
+mostCurrent._rbpaidreceived.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 217;BA.debugLine="rbPaidBooked.Checked = False";
+mostCurrent._rbpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 218;BA.debugLine="End Sub";
+return "";
+}
+public static String  _rbpaidbooked_checkedchange(boolean _checked) throws Exception{
+ //BA.debugLineNum = 209;BA.debugLine="Private Sub rbPaidBooked_CheckedChange(Checked As";
+ //BA.debugLineNum = 210;BA.debugLine="If Checked = False Then Return";
+if (_checked==anywheresoftware.b4a.keywords.Common.False) { 
+if (true) return "";};
+ //BA.debugLineNum = 211;BA.debugLine="rbPaidReceived.Checked = False";
+mostCurrent._rbpaidreceived.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 212;BA.debugLine="rbNotPaidBooked.Checked = False";
+mostCurrent._rbnotpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 213;BA.debugLine="End Sub";
+return "";
+}
+public static String  _rbpaidreceived_checkedchange(boolean _checked) throws Exception{
+ //BA.debugLineNum = 203;BA.debugLine="Private Sub rbPaidReceived_CheckedChange(Checked A";
+ //BA.debugLineNum = 204;BA.debugLine="If Checked = False Then Return";
+if (_checked==anywheresoftware.b4a.keywords.Common.False) { 
+if (true) return "";};
+ //BA.debugLineNum = 205;BA.debugLine="rbPaidBooked.Checked = False";
+mostCurrent._rbpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 206;BA.debugLine="rbNotPaidBooked.Checked = False";
+mostCurrent._rbnotpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 207;BA.debugLine="End Sub";
+return "";
+}
+public static String  _refreshcartdisplay() throws Exception{
+int _top = 0;
+double _totalamount = 0;
+int _totalquantity = 0;
+anywheresoftware.b4a.objects.collections.Map _cartitem = null;
+String _itemname = "";
+double _unitprice = 0;
+int _quantity = 0;
+double _linetotal = 0;
+anywheresoftware.b4a.objects.PanelWrapper _pnl = null;
+anywheresoftware.b4a.objects.LabelWrapper _lblname = null;
+anywheresoftware.b4a.objects.LabelWrapper _lblqty = null;
+anywheresoftware.b4a.objects.LabelWrapper _lbllinetotal = null;
+ //BA.debugLineNum = 402;BA.debugLine="Private Sub RefreshCartDisplay";
+ //BA.debugLineNum = 403;BA.debugLine="svCartSummary.Panel.RemoveAllViews";
+mostCurrent._svcartsummary.getPanel().RemoveAllViews();
+ //BA.debugLineNum = 404;BA.debugLine="Dim top As Int = 0";
+_top = (int) (0);
+ //BA.debugLineNum = 405;BA.debugLine="Dim totalAmount As Double = 0";
+_totalamount = 0;
+ //BA.debugLineNum = 406;BA.debugLine="Dim totalQuantity As Int = 0";
+_totalquantity = (int) (0);
+ //BA.debugLineNum = 408;BA.debugLine="For Each cartItem As Map In CartItems";
+_cartitem = new anywheresoftware.b4a.objects.collections.Map();
+{
+final anywheresoftware.b4a.BA.IterableList group5 = mostCurrent._cartitems;
+final int groupLen5 = group5.getSize()
+;int index5 = 0;
+;
+for (; index5 < groupLen5;index5++){
+_cartitem = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(group5.Get(index5)));
+ //BA.debugLineNum = 409;BA.debugLine="Dim itemName As String = cartItem.Get(\"item_name";
+_itemname = BA.ObjectToString(_cartitem.Get((Object)("item_name")));
+ //BA.debugLineNum = 410;BA.debugLine="Dim unitPrice As Double = cartItem.Get(\"unit_pri";
+_unitprice = (double)(BA.ObjectToNumber(_cartitem.Get((Object)("unit_price"))));
+ //BA.debugLineNum = 411;BA.debugLine="Dim quantity As Int = cartItem.Get(\"quantity\")";
+_quantity = (int)(BA.ObjectToNumber(_cartitem.Get((Object)("quantity"))));
+ //BA.debugLineNum = 412;BA.debugLine="Dim lineTotal As Double = unitPrice * quantity";
+_linetotal = _unitprice*_quantity;
+ //BA.debugLineNum = 414;BA.debugLine="Dim pnl As Panel";
+_pnl = new anywheresoftware.b4a.objects.PanelWrapper();
+ //BA.debugLineNum = 415;BA.debugLine="pnl.Initialize(\"\")";
+_pnl.Initialize(mostCurrent.activityBA,"");
+ //BA.debugLineNum = 416;BA.debugLine="pnl.Color = Colors.White";
+_pnl.setColor(anywheresoftware.b4a.keywords.Common.Colors.White);
+ //BA.debugLineNum = 417;BA.debugLine="pnl.SetLayout(0, top, svCartSummary.Width, 70dip";
+_pnl.SetLayout((int) (0),_top,mostCurrent._svcartsummary.getWidth(),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (70)));
+ //BA.debugLineNum = 419;BA.debugLine="Dim lblName As Label";
+_lblname = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 420;BA.debugLine="lblName.Initialize(\"\")";
+_lblname.Initialize(mostCurrent.activityBA,"");
+ //BA.debugLineNum = 421;BA.debugLine="lblName.Text = itemName";
+_lblname.setText(BA.ObjectToCharSequence(_itemname));
+ //BA.debugLineNum = 422;BA.debugLine="lblName.TextSize = 16";
+_lblname.setTextSize((float) (16));
+ //BA.debugLineNum = 423;BA.debugLine="lblName.TextColor = Colors.Black";
+_lblname.setTextColor(anywheresoftware.b4a.keywords.Common.Colors.Black);
+ //BA.debugLineNum = 424;BA.debugLine="lblName.SetLayout(10dip, 5dip, 60%x, 25dip)";
+_lblname.SetLayout(anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (10)),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (5)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (60),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (25)));
+ //BA.debugLineNum = 426;BA.debugLine="Dim lblQty As Label";
+_lblqty = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 427;BA.debugLine="lblQty.Initialize(\"\")";
+_lblqty.Initialize(mostCurrent.activityBA,"");
+ //BA.debugLineNum = 428;BA.debugLine="lblQty.Text = \"Qty: \" & quantity";
+_lblqty.setText(BA.ObjectToCharSequence("Qty: "+BA.NumberToString(_quantity)));
+ //BA.debugLineNum = 429;BA.debugLine="lblQty.TextSize = 14";
+_lblqty.setTextSize((float) (14));
+ //BA.debugLineNum = 430;BA.debugLine="lblQty.TextColor = Colors.Gray";
+_lblqty.setTextColor(anywheresoftware.b4a.keywords.Common.Colors.Gray);
+ //BA.debugLineNum = 431;BA.debugLine="lblQty.SetLayout(10dip, 32dip, 30%x, 20dip)";
+_lblqty.SetLayout(anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (10)),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (32)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (30),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (20)));
+ //BA.debugLineNum = 433;BA.debugLine="Dim lblLineTotal As Label";
+_lbllinetotal = new anywheresoftware.b4a.objects.LabelWrapper();
+ //BA.debugLineNum = 434;BA.debugLine="lblLineTotal.Initialize(\"\")";
+_lbllinetotal.Initialize(mostCurrent.activityBA,"");
+ //BA.debugLineNum = 435;BA.debugLine="lblLineTotal.Text = \"₱\" & NumberFormat2(lineTota";
+_lbllinetotal.setText(BA.ObjectToCharSequence("₱"+anywheresoftware.b4a.keywords.Common.NumberFormat2(_linetotal,(int) (1),(int) (2),(int) (2),anywheresoftware.b4a.keywords.Common.False)));
+ //BA.debugLineNum = 436;BA.debugLine="lblLineTotal.TextSize = 16";
+_lbllinetotal.setTextSize((float) (16));
+ //BA.debugLineNum = 437;BA.debugLine="lblLineTotal.TextColor = Colors.RGB(0, 120, 0)";
+_lbllinetotal.setTextColor(anywheresoftware.b4a.keywords.Common.Colors.RGB((int) (0),(int) (120),(int) (0)));
+ //BA.debugLineNum = 438;BA.debugLine="lblLineTotal.Gravity = Gravity.RIGHT";
+_lbllinetotal.setGravity(anywheresoftware.b4a.keywords.Common.Gravity.RIGHT);
+ //BA.debugLineNum = 439;BA.debugLine="lblLineTotal.SetLayout(65%x, 10dip, 30%x, 25dip)";
+_lbllinetotal.SetLayout(anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (65),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (10)),anywheresoftware.b4a.keywords.Common.PerXToCurrent((float) (30),mostCurrent.activityBA),anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (25)));
+ //BA.debugLineNum = 441;BA.debugLine="pnl.AddView(lblName, lblName.Left, lblName.Top,";
+_pnl.AddView((android.view.View)(_lblname.getObject()),_lblname.getLeft(),_lblname.getTop(),_lblname.getWidth(),_lblname.getHeight());
+ //BA.debugLineNum = 442;BA.debugLine="pnl.AddView(lblQty, lblQty.Left, lblQty.Top, lbl";
+_pnl.AddView((android.view.View)(_lblqty.getObject()),_lblqty.getLeft(),_lblqty.getTop(),_lblqty.getWidth(),_lblqty.getHeight());
+ //BA.debugLineNum = 443;BA.debugLine="pnl.AddView(lblLineTotal, lblLineTotal.Left, lbl";
+_pnl.AddView((android.view.View)(_lbllinetotal.getObject()),_lbllinetotal.getLeft(),_lbllinetotal.getTop(),_lbllinetotal.getWidth(),_lbllinetotal.getHeight());
+ //BA.debugLineNum = 445;BA.debugLine="svCartSummary.Panel.AddView(pnl, 0, top, pnl.Wid";
+mostCurrent._svcartsummary.getPanel().AddView((android.view.View)(_pnl.getObject()),(int) (0),_top,_pnl.getWidth(),_pnl.getHeight());
+ //BA.debugLineNum = 446;BA.debugLine="top = top + pnl.Height + 3dip";
+_top = (int) (_top+_pnl.getHeight()+anywheresoftware.b4a.keywords.Common.DipToCurrent((int) (3)));
+ //BA.debugLineNum = 448;BA.debugLine="totalAmount = totalAmount + lineTotal";
+_totalamount = _totalamount+_linetotal;
+ //BA.debugLineNum = 449;BA.debugLine="totalQuantity = totalQuantity + quantity";
+_totalquantity = (int) (_totalquantity+_quantity);
+ }
+};
+ //BA.debugLineNum = 452;BA.debugLine="svCartSummary.Panel.Height = top";
+mostCurrent._svcartsummary.getPanel().setHeight(_top);
+ //BA.debugLineNum = 453;BA.debugLine="lblTotalItems.Text = \"Items: \" & CartItems.Size &";
+mostCurrent._lbltotalitems.setText(BA.ObjectToCharSequence("Items: "+BA.NumberToString(mostCurrent._cartitems.getSize())+" entries ("+BA.NumberToString(_totalquantity)+" total)"));
+ //BA.debugLineNum = 454;BA.debugLine="lblTotalAmount.Text = \"Total: ₱\" & NumberFormat2(";
+mostCurrent._lbltotalamount.setText(BA.ObjectToCharSequence("Total: ₱"+anywheresoftware.b4a.keywords.Common.NumberFormat2(_totalamount,(int) (1),(int) (2),(int) (2),anywheresoftware.b4a.keywords.Common.False)));
+ //BA.debugLineNum = 455;BA.debugLine="End Sub";
+return "";
+}
+public static String  _saveordertolocaldatabase(String _fulfillmentstatus) throws Exception{
+String _transactionnumber = "";
+double _total = 0;
+anywheresoftware.b4a.objects.collections.Map _cartitem = null;
+double _unitprice = 0;
+int _quantity = 0;
+anywheresoftware.b4a.sql.SQL.ResultSetWrapper _rsneworder = null;
+int _neworderid = 0;
+int _productid = 0;
+String _paymentstatus = "";
+String _deliverystatus = "";
+ //BA.debugLineNum = 462;BA.debugLine="Private Sub SaveOrderToLocalDatabase(FulfillmentSt";
+ //BA.debugLineNum = 463;BA.debugLine="Try";
+try { //BA.debugLineNum = 464;BA.debugLine="If Main.VENDOR_ID <= 0 Or Main.LoggedInUserID <=";
+if (mostCurrent._main._vendor_id /*int*/ <=0 || mostCurrent._main._loggedinuserid /*int*/ <=0) { 
+ //BA.debugLineNum = 465;BA.debugLine="ToastMessageShow(\"Missing user/vendor session.";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Missing user/vendor session. Please login again."),anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 466;BA.debugLine="Return";
+if (true) return "";
+ };
+ //BA.debugLineNum = 469;BA.debugLine="Dim transactionNumber As String = GenerateTransa";
+_transactionnumber = _generatetransactionnumber();
+ //BA.debugLineNum = 470;BA.debugLine="Dim total As Double = 0";
+_total = 0;
+ //BA.debugLineNum = 472;BA.debugLine="For Each cartItem As Map In CartItems";
+_cartitem = new anywheresoftware.b4a.objects.collections.Map();
+{
+final anywheresoftware.b4a.BA.IterableList group8 = mostCurrent._cartitems;
+final int groupLen8 = group8.getSize()
+;int index8 = 0;
+;
+for (; index8 < groupLen8;index8++){
+_cartitem = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(group8.Get(index8)));
+ //BA.debugLineNum = 473;BA.debugLine="Dim unitPrice As Double = cartItem.Get(\"unit_pr";
+_unitprice = (double)(BA.ObjectToNumber(_cartitem.Get((Object)("unit_price"))));
+ //BA.debugLineNum = 474;BA.debugLine="Dim quantity As Int = cartItem.Get(\"quantity\")";
+_quantity = (int)(BA.ObjectToNumber(_cartitem.Get((Object)("quantity"))));
+ //BA.debugLineNum = 475;BA.debugLine="total = total + (unitPrice * quantity)";
+_total = _total+(_unitprice*_quantity);
+ }
+};
+ //BA.debugLineNum = 478;BA.debugLine="Main.SQLProducts.ExecNonQuery2( _             \"I";
+mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecNonQuery2("INSERT INTO orders (vendor_id, user_id, transaction_number, device_id, date_created, status, total_amount, sync_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",anywheresoftware.b4a.keywords.Common.ArrayToList(new Object[]{(Object)(mostCurrent._main._vendor_id /*int*/ ),(Object)(mostCurrent._main._loggedinuserid /*int*/ ),(Object)(_transactionnumber),(Object)(mostCurrent._main._device_id /*String*/ ),(Object)(anywheresoftware.b4a.keywords.Common.DateTime.getNow()),(Object)("Pending"),(Object)(_total),(Object)("Holding")}));
+ //BA.debugLineNum = 482;BA.debugLine="Dim rsNewOrder As ResultSet = Main.SQLProducts.E";
+_rsneworder = new anywheresoftware.b4a.sql.SQL.ResultSetWrapper();
+_rsneworder = (anywheresoftware.b4a.sql.SQL.ResultSetWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.sql.SQL.ResultSetWrapper(), (android.database.Cursor)(mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecQuery("SELECT last_insert_rowid() AS id")));
+ //BA.debugLineNum = 483;BA.debugLine="rsNewOrder.NextRow";
+_rsneworder.NextRow();
+ //BA.debugLineNum = 484;BA.debugLine="Dim newOrderID As Int = rsNewOrder.GetInt(\"id\")";
+_neworderid = _rsneworder.GetInt("id");
+ //BA.debugLineNum = 485;BA.debugLine="rsNewOrder.Close";
+_rsneworder.Close();
+ //BA.debugLineNum = 487;BA.debugLine="For Each cartItem As Map In CartItems";
+_cartitem = new anywheresoftware.b4a.objects.collections.Map();
+{
+final anywheresoftware.b4a.BA.IterableList group18 = mostCurrent._cartitems;
+final int groupLen18 = group18.getSize()
+;int index18 = 0;
+;
+for (; index18 < groupLen18;index18++){
+_cartitem = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(group18.Get(index18)));
+ //BA.debugLineNum = 488;BA.debugLine="Dim productID As Int = cartItem.Get(\"product_id";
+_productid = (int)(BA.ObjectToNumber(_cartitem.Get((Object)("product_id"))));
+ //BA.debugLineNum = 489;BA.debugLine="Dim unitPrice As Double = cartItem.Get(\"unit_pr";
+_unitprice = (double)(BA.ObjectToNumber(_cartitem.Get((Object)("unit_price"))));
+ //BA.debugLineNum = 490;BA.debugLine="Dim quantity As Int = cartItem.Get(\"quantity\")";
+_quantity = (int)(BA.ObjectToNumber(_cartitem.Get((Object)("quantity"))));
+ //BA.debugLineNum = 491;BA.debugLine="Dim paymentStatus As String = GetPaymentStatusF";
+_paymentstatus = _getpaymentstatusfromfulfillmentstatus(_fulfillmentstatus);
+ //BA.debugLineNum = 492;BA.debugLine="Dim deliveryStatus As String = GetDeliveryStatu";
+_deliverystatus = _getdeliverystatusfromfulfillmentstatus(_fulfillmentstatus);
+ //BA.debugLineNum = 494;BA.debugLine="Main.SQLProducts.ExecNonQuery2( _";
+mostCurrent._main._sqlproducts /*anywheresoftware.b4a.sql.SQL*/ .ExecNonQuery2("INSERT INTO order_items (order_id, product_id, quantity, price, fulfillment_status, payment_status, delivery_status) VALUES (?, ?, ?, ?, ?, ?, ?)",anywheresoftware.b4a.keywords.Common.ArrayToList(new Object[]{(Object)(_neworderid),(Object)(_productid),(Object)(_quantity),(Object)(_unitprice),(Object)(_fulfillmentstatus),(Object)(_paymentstatus),(Object)(_deliverystatus)}));
+ }
+};
+ //BA.debugLineNum = 499;BA.debugLine="Log(\"Order saved with transaction: \" & transacti";
+anywheresoftware.b4a.keywords.Common.LogImpl("04980773","Order saved with transaction: "+_transactionnumber,0);
+ } 
+       catch (Exception e28) {
+			processBA.setLastException(e28); //BA.debugLineNum = 502;BA.debugLine="Log(\"SaveOrderToLocalDatabase error: \" & LastExc";
+anywheresoftware.b4a.keywords.Common.LogImpl("04980776","SaveOrderToLocalDatabase error: "+anywheresoftware.b4a.keywords.Common.LastException(mostCurrent.activityBA).getMessage(),0);
+ //BA.debugLineNum = 503;BA.debugLine="ToastMessageShow(\"Failed to save order. Please t";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow(BA.ObjectToCharSequence("Failed to save order. Please try again."),anywheresoftware.b4a.keywords.Common.True);
+ };
+ //BA.debugLineNum = 505;BA.debugLine="End Sub";
+return "";
+}
+public static String  _showpurchasestatuspopup() throws Exception{
+ //BA.debugLineNum = 156;BA.debugLine="Private Sub ShowPurchaseStatusPopup";
+ //BA.debugLineNum = 157;BA.debugLine="rbPaidReceived.Checked = True";
+mostCurrent._rbpaidreceived.setChecked(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 158;BA.debugLine="rbPaidBooked.Checked = False";
+mostCurrent._rbpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 159;BA.debugLine="rbNotPaidBooked.Checked = False";
+mostCurrent._rbnotpaidbooked.setChecked(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 161;BA.debugLine="pnlDim.Visible = True";
+mostCurrent._pnldim.setVisible(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 162;BA.debugLine="pnlDim.BringToFront";
+mostCurrent._pnldim.BringToFront();
+ //BA.debugLineNum = 163;BA.debugLine="pnlPurchaseStatus.Visible = True";
+mostCurrent._pnlpurchasestatus.setVisible(anywheresoftware.b4a.keywords.Common.True);
+ //BA.debugLineNum = 164;BA.debugLine="pnlPurchaseStatus.BringToFront";
+mostCurrent._pnlpurchasestatus.BringToFront();
+ //BA.debugLineNum = 165;BA.debugLine="End Sub";
 return "";
 }
 }
