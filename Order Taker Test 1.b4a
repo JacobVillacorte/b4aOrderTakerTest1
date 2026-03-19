@@ -1,11 +1,12 @@
 ﻿Build1=Default,b4a.OrderTakerTest1
 File1=addOrderActivity.bal
 File2=bggg.jpg
-File3=forgotPass.bal
-File4=loginTest1.db
-File5=main.bal
-File6=OrderTakerDashboard.bal
-File7=userorders.bal
+File3=customerSelection.bal
+File4=forgotPass.bal
+File5=loginTest1.db
+File6=main.bal
+File7=OrderTakerDashboard.bal
+File8=userorders.bal
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
@@ -13,6 +14,7 @@ FileGroup4=Default Group
 FileGroup5=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
+FileGroup8=Default Group
 Group=Default Group
 Library1=core
 Library2=json
@@ -25,13 +27,14 @@ Library8=phone
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~SetApplicationAttribute(android:usesCleartextTraffic, "true")~\n~AddPermission(android.permission.INTERNET)~\n~AddPermission(android.permission.ACCESS_NETWORK_STATE)~\n~'End of default text.~\n~
 Module1=addOrderActivity
 Module2=Controls
-Module3=forgotPass
-Module4=OrderTakerDashboard
-Module5=Starter
-Module6=userOrders
-NumberOfFiles=7
+Module3=customerSelection
+Module4=forgotPass
+Module5=OrderTakerDashboard
+Module6=Starter
+Module7=userOrders
+NumberOfFiles=8
 NumberOfLibraries=8
-NumberOfModules=6
+NumberOfModules=7
 Version=13.4
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -65,6 +68,11 @@ Sub Process_Globals
 	Public LoggedInConventionID As Int = 5
 	Public LoggedInRequiresVendorSelection As Boolean
 	Public AssignedVendors As List
+	' Selected customer (set by CustomerSelection activity)
+	Public SELECTED_CUSTOMER_ID As Int = 0
+	Public SELECTED_CUSTOMER_NAME As String = ""
+	Public SELECTED_CUSTOMER_OWNER As String = ""
+	Public SELECTED_CUSTOMER_ADDRESS As String = ""
 
 	' API base URL (important: base path only, not specific endpoint)
 	Public API_URL As String = "http://192.168.8.225/ordertaker_api/"
@@ -137,6 +145,20 @@ Private Sub SetupProductsDatabase
         "barcode TEXT, " & _
         "vendor_id INTEGER, " & _
         "is_active INTEGER)")
+	
+	' Customers table for offline selection (cached via Fetch)
+	SQLProducts.ExecNonQuery("CREATE TABLE IF NOT EXISTS mst_customers (" & _
+		"customer_id INTEGER PRIMARY KEY, " & _
+		"customer_code TEXT, " & _
+		"customer_name TEXT, " & _
+		"business_owner TEXT, " & _
+		"address TEXT, " & _
+		"is_active INTEGER, " & _
+		"branch_id INTEGER, " & _
+		"category TEXT)")
+	
+	' Index to speed up searches
+	SQLProducts.ExecNonQuery("CREATE INDEX IF NOT EXISTS idx_mst_customers_search ON mst_customers(customer_code, customer_name, business_owner, address)")
 End Sub
 
 ' Triggered when user taps the Login button

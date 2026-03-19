@@ -4,7 +4,7 @@ ModulesStructureVersion=1
 Type=Activity
 Version=13.4
 @EndOfDesignText@
-#Region  Activity Attributes 
+#Region  Activity Attributes
     #FullScreen: False
     #IncludeTitle: False
 #End Region
@@ -47,6 +47,14 @@ Sub Globals
 
 	' Inventory tab
 	Private svInventory As ScrollView
+	' Track active HTTP jobs so we can release/cancel them on pause
+	Private currentFetchJob As HttpJob
+	Private currentCustomerJob As HttpJob
+	'Dashboard Status
+	Private lblPendingSync As Label
+	Private lblTodaySales As Label
+	Private lblTodaysOrders As Label
+	Private bttnSyncOrdersNow As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -68,6 +76,24 @@ Sub Activity_Resume
 End Sub
 
 Sub Activity_Pause(UserClosed As Boolean)
+	' Release any pending network jobs to avoid events firing after activity is paused/closed
+	If currentFetchJob <> Null Then
+		Try
+			If currentFetchJob.IsInitialized Then currentFetchJob.Release
+		Catch
+			Log(LastException.Message)
+		End Try
+		currentFetchJob = Null
+	End If
+
+	If currentCustomerJob <> Null Then
+		Try
+			If currentCustomerJob.IsInitialized Then currentCustomerJob.Release
+		Catch
+			Log(LastException.Message)
+		End Try
+		currentCustomerJob = Null
+	End If
 End Sub
 
 ' Creates orders/order_items tables if they don't exist
@@ -106,6 +132,11 @@ Sub EnsureLocalSchema
 	AddColumnIfMissing("orders", "synced_at", "INTEGER DEFAULT 0")
 	AddColumnIfMissing("orders", "transaction_number", "TEXT")
 	AddColumnIfMissing("orders", "device_id", "TEXT")
+	' customer fields for orders (added safely if missing)
+	AddColumnIfMissing("orders", "customer_id", "INTEGER DEFAULT 0")
+	AddColumnIfMissing("orders", "customer_name", "TEXT DEFAULT ''")
+	AddColumnIfMissing("orders", "customer_owner", "TEXT DEFAULT ''")
+	AddColumnIfMissing("orders", "customer_address", "TEXT DEFAULT ''")
 
 	' order_items table
 	AddColumnIfMissing("order_items", "fulfillment_status", "TEXT DEFAULT ''")
@@ -224,33 +255,80 @@ End Sub
 Private Sub LoadOrdersIntoList
 	clvContentOrders.Clear
 
-	Dim rs As ResultSet = Main.SQLProducts.ExecQuery2( _
-        "SELECT * FROM orders WHERE vendor_id = ? AND user_id = ? ORDER BY order_id DESC", _
-        Array As String(Main.VENDOR_ID, Main.LoggedInUserID))
+	Dim searchText As String = etContentSearchOrder.Text.Trim.ToLowerCase ' new
+	Dim rs As ResultSet
+
+	If searchText = "" Then ' new
+		rs = Main.SQLProducts.ExecQuery2( _
+	        "SELECT * FROM orders " & _
+	        "WHERE vendor_id = ? AND user_id = ? " & _
+	        "ORDER BY order_id DESC", _
+	        Array As String(Main.VENDOR_ID, Main.LoggedInUserID))
+	Else
+		Dim likeValue As String = "%" & searchText & "%" ' new
+
+		rs = Main.SQLProducts.ExecQuery2( _
+	        "SELECT * FROM orders " & _
+	        "WHERE vendor_id = ? AND user_id = ? " & _
+	        "AND LOWER('order #' || CAST(order_id AS TEXT)) LIKE ? " & _
+	        "ORDER BY order_id DESC", _
+	        Array As String(Main.VENDOR_ID, Main.LoggedInUserID, likeValue))
+	End If
+
+	If rs.RowCount = 0 Then ' new
+		Dim pnlEmpty As Panel ' new
+		pnlEmpty.Initialize("") ' new
+		pnlEmpty.Color = Colors.Transparent ' new
+		pnlEmpty.SetLayout(0, 0, clvContentOrders.AsView.Width, 70dip) ' new
+
+		Dim lblEmpty As Label ' new
+		lblEmpty.Initialize("") ' new
+		lblEmpty.Text = "No matching order found" ' new
+		lblEmpty.TextColor = Colors.Gray ' new
+		lblEmpty.TextSize = 14 ' new
+		lblEmpty.Gravity = Gravity.CENTER ' new
+
+		pnlEmpty.AddView(lblEmpty, 0, 15dip, clvContentOrders.AsView.Width, 30dip) ' new
+		clvContentOrders.Add(pnlEmpty, 0) ' new
+
+		rs.Close ' new
+		Return ' new
+	End If
 
 	Do While rs.NextRow
 		Dim pnl As Panel
 		pnl.Initialize("")
 		pnl.SetLayout(0, 0, clvContentOrders.AsView.Width, 80dip)
+		pnl.Color = Colors.White ' new
 
 		Dim lblOrderID As Label
 		lblOrderID.Initialize("")
 		lblOrderID.Text = "Order #" & rs.GetInt("order_id")
 		lblOrderID.TextSize = 16
-		lblOrderID.SetLayout(10dip, 5dip, 50%x, 25dip)
+		lblOrderID.Typeface = Typeface.DEFAULT_BOLD ' new
+		lblOrderID.SetLayout(10dip, 5dip, 60%x, 25dip) ' new
 
 		Dim lblTotal As Label
 		lblTotal.Initialize("")
-		lblTotal.Text = "Total: ₱" & rs.GetDouble("total_amount")
+		lblTotal.Text = "Total: ₱" & NumberFormat2(rs.GetDouble("total_amount"), 1, 2, 2, False) ' new
 		lblTotal.SetLayout(10dip, 30dip, 50%x, 25dip)
+
+		Dim lblSync As Label ' new
+		lblSync.Initialize("") ' new
+		lblSync.Text = rs.GetString("sync_status") ' new
+		lblSync.TextColor = Colors.Gray ' new
+		lblSync.Gravity = Gravity.RIGHT ' new
+		lblSync.SetLayout(60%x, 30dip, 35%x, 25dip) ' new
 
 		pnl.AddView(lblOrderID, lblOrderID.Left, lblOrderID.Top, lblOrderID.Width, lblOrderID.Height)
 		pnl.AddView(lblTotal, lblTotal.Left, lblTotal.Top, lblTotal.Width, lblTotal.Height)
+		pnl.AddView(lblSync, lblSync.Left, lblSync.Top, lblSync.Width, lblSync.Height) ' new
 
 		clvContentOrders.Add(pnl, rs.GetInt("order_id"))
 	Loop
 	rs.Close
 End Sub
+
 
 Private Sub clvContentOrders_ItemClick(Index As Int, Value As Object)
 	Dim orderID As Int = Value
@@ -263,9 +341,9 @@ End Sub
 Private Sub ShowOrderDetails(orderID As Int)
 	Try
 		Dim cursorOrder As Cursor = Main.SQLProducts.ExecQuery2( _
-            "SELECT order_id, transaction_number, date_created, total_amount, status, sync_status " & _
-            "FROM orders WHERE order_id = ?", _
-            Array As String(orderID))
+	            "SELECT order_id, transaction_number, date_created, total_amount, status, sync_status, customer_id, customer_name, customer_owner, customer_address " & _
+	            "FROM orders WHERE order_id = ?", _
+	            Array As String(orderID))
 
 		If cursorOrder.RowCount = 0 Then
 			ToastMessageShow("Order not found", False)
@@ -275,15 +353,61 @@ Private Sub ShowOrderDetails(orderID As Int)
 
 		cursorOrder.Position = 0
 
-		Dim transactionNumber As String = cursorOrder.GetString("transaction_number")
-		If transactionNumber = Null Then transactionNumber = ""
+		Dim transactionNumber As String = ""
+		Try
+			transactionNumber = cursorOrder.GetString("transaction_number")
+			If transactionNumber = Null Then transactionNumber = ""
+		Catch
+			transactionNumber = ""
+		End Try
 
-		Dim syncStatus As String = cursorOrder.GetString("sync_status")
-		If syncStatus = Null Then syncStatus = ""
+		Dim syncStatus As String = ""
+		Try
+			syncStatus = cursorOrder.GetString("sync_status")
+			If syncStatus = Null Then syncStatus = ""
+		Catch
+			syncStatus = ""
+		End Try
 
-		Dim orderDate As Long = cursorOrder.GetLong("date_created")
-		Dim totalAmount As Double = cursorOrder.GetDouble("total_amount")
-		Dim orderStatus As String = cursorOrder.GetString("status")
+		Dim orderDate As Long = 0
+		Try
+			orderDate = cursorOrder.GetLong("date_created")
+		Catch
+			orderDate = 0
+		End Try
+		Dim totalAmount As Double = 0
+		Try
+			totalAmount = cursorOrder.GetDouble("total_amount")
+		Catch
+			totalAmount = 0
+		End Try
+		Dim orderStatus As String = ""
+		Try
+			orderStatus = cursorOrder.GetString("status")
+			If orderStatus = Null Then orderStatus = ""
+		Catch
+			orderStatus = ""
+		End Try
+
+		' Try to read customer fields if present (EnsureLocalSchema adds them)
+		Dim customerName As String = ""
+		Dim customerOwner As String = ""
+		Dim customerAddress As String = ""
+		Try
+			If HasColumn("orders", "customer_name") Then
+				customerName = cursorOrder.GetString("customer_name")
+				If customerName = Null Then customerName = ""
+				customerOwner = cursorOrder.GetString("customer_owner")
+				If customerOwner = Null Then customerOwner = ""
+				customerAddress = cursorOrder.GetString("customer_address")
+				If customerAddress = Null Then customerAddress = ""
+			End If
+		Catch
+			customerName = ""
+			customerOwner = ""
+			customerAddress = ""
+		End Try
+
 		cursorOrder.Close
 
 		Dim cursorItems As Cursor = Main.SQLProducts.ExecQuery2( _
@@ -321,12 +445,15 @@ Private Sub ShowOrderDetails(orderID As Int)
 		cursorItems.Close
 
 		Dim message As String = _
-            "Transaction: " & transactionNumber & CRLF & _
-            "Date: " & DateTime.Date(orderDate) & CRLF & _
-            "Status: " & orderStatus & CRLF & _
-            "Sync: " & syncStatus & CRLF & _
-            "Total: ₱" & NumberFormat2(totalAmount, 1, 2, 2, False) & CRLF & CRLF & _
-            "Items:" & CRLF & itemsText
+			"Transaction: " & transactionNumber & CRLF & _
+			(IIf(customerName <> "", "Customer: " & customerName & CRLF, "")) & _
+			(IIf(customerOwner <> "", "Owner: " & customerOwner & CRLF, "")) & _
+			(IIf(customerAddress <> "", "Address: " & customerAddress & CRLF, "")) & _
+			"Date: " & DateTime.Date(orderDate) & CRLF & _
+			"Status: " & orderStatus & CRLF & _
+			"Sync: " & syncStatus & CRLF & _
+			"Total: ₱" & NumberFormat2(totalAmount, 1, 2, 2, False) & CRLF & CRLF & _
+			"Items:" & CRLF & itemsText
 
 		Msgbox2Async(message, "Order #" & orderID, "OK", "", "", Null, False)
 		Wait For Msgbox_Result (Result As Int)
@@ -338,7 +465,8 @@ Private Sub ShowOrderDetails(orderID As Int)
 End Sub
 
 Private Sub bttnAddOrder_Click
-	StartActivity(addOrderActivity)
+	' Open customer selection first so chosen customer is attached to the order
+	StartActivity(CustomerSelection)
 End Sub
 
 ' ======================
@@ -355,17 +483,18 @@ Private Sub bttnFetchProducts_Click
 	SetFetchButtonBusyState(True)
 	lblFetchStatus.Text = "Connecting to server..."
 	lblFetchStatus.TextColor = Colors.Blue
-
-	Dim j As HttpJob
-	j.Initialize("", Me)
+	' Create a local HttpJob and track it in currentFetchJob so we can release on pause
+	Dim fetchJob As HttpJob
+	fetchJob.Initialize("FetchProducts", Me)
+	currentFetchJob = fetchJob
 
 	Dim fetchUrl As String = Main.API_URL & "get_items.php?vendor_id=" & Main.VENDOR_ID
-	j.Download(fetchUrl)
+	fetchJob.Download(fetchUrl)
 
-	Wait For (j) JobDone(j As HttpJob)
+	Wait For (fetchJob) JobDone(jobFetch As HttpJob)
 
-	If j.Success Then
-		Dim response As String = j.GetString
+	If jobFetch.Success Then
+		Dim response As String = jobFetch.GetString
 		If response = "" Or response = Null Then
 			ShowFetchErrorMessage("Server returned empty response")
 		Else
@@ -376,8 +505,28 @@ Private Sub bttnFetchProducts_Click
 		ToastMessageShow("Network error. Using cached data.", True)
 	End If
 
+	' After items are fetched, attempt to fetch & cache customers for offline use
+	Dim custJob As HttpJob
+	custJob.Initialize("FetchCustomers", Me)
+	currentCustomerJob = custJob
+	Dim custUrl As String = Main.API_URL & "search_customers.php?limit=1000"
+	custJob.Download(custUrl)
+
+	Wait For (custJob) JobDone(jobCust As HttpJob)
+	If jobCust.Success Then
+		Dim custResp As String = jobCust.GetString
+		If custResp <> "" And custResp <> Null Then
+			ParseAndSaveCustomersFromServerResponse(custResp)
+		End If
+	Else
+		Log("Customer fetch failed: " & jobCust.ErrorMessage)
+	End If
+	jobCust.Release
+	currentCustomerJob = Null
+
 	SetFetchButtonBusyState(False)
-	j.Release
+	jobFetch.Release
+	currentFetchJob = Null
 End Sub
 
 Private Sub SetFetchButtonBusyState(isBusy As Boolean)
@@ -422,25 +571,95 @@ Private Sub DeleteOldCacheAndSaveFreshProducts(items As List)
 		Return
 	End If
 
-	Main.SQLProducts.ExecNonQuery2("DELETE FROM items WHERE vendor_id = ?", Array As Object(currentVendor))
+	' Use a transaction for bulk writes to avoid per-insert commits (much faster and avoids UI blocking)
+	Try
+		Main.SQLProducts.ExecNonQuery("BEGIN TRANSACTION")
+		Main.SQLProducts.ExecNonQuery2("DELETE FROM items WHERE vendor_id = ?", Array As Object(currentVendor))
 
-	For i = 0 To items.Size - 1
-		Dim item As Map = items.Get(i)
+		For i = 0 To items.Size - 1
+			Dim item As Map = items.Get(i)
 
-		Dim barcode As String = ""
-		If item.ContainsKey("barcode") And item.Get("barcode") <> Null Then
-			barcode = item.Get("barcode")
+			Dim barcode As String = ""
+			If item.ContainsKey("barcode") And item.Get("barcode") <> Null Then
+				barcode = item.Get("barcode")
+			End If
+
+			Dim vendorID As Int = currentVendor
+			If item.ContainsKey("vendor_id") And item.Get("vendor_id") <> Null Then
+				vendorID = item.Get("vendor_id")
+			End If
+
+			Main.SQLProducts.ExecNonQuery2( _
+				"INSERT OR REPLACE INTO items (item_id, item_code, item_name, unit_price, barcode, vendor_id, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)", _
+				Array As Object(item.Get("item_id"), item.Get("item_code"), item.Get("item_name"), item.Get("unit_price"), barcode, vendorID, 1))
+		Next
+
+		Main.SQLProducts.ExecNonQuery("COMMIT")
+	Catch
+		Try
+			Main.SQLProducts.ExecNonQuery("ROLLBACK")
+		Catch
+			Log(LastException.Message)
+		End Try
+		Log("DeleteOldCacheAndSaveFreshProducts error: " & LastException.Message)
+	End Try
+End Sub
+
+
+Private Sub ParseAndSaveCustomersFromServerResponse(response As String)
+	Try
+		Dim parser As JSONParser
+		parser.Initialize(response)
+		Dim root As Map = parser.NextObject
+
+		If root.Get("status") <> "success" Then
+			Log("Customer fetch returned no success status")
+			Return
 		End If
 
-		Dim vendorID As Int = currentVendor
-		If item.ContainsKey("vendor_id") And item.Get("vendor_id") <> Null Then
-			vendorID = item.Get("vendor_id")
-		End If
+		Dim customers As List = root.Get("data")
+		If customers.IsInitialized = False Then Return
 
-		Main.SQLProducts.ExecNonQuery2( _
-            "INSERT OR REPLACE INTO items (item_id, item_code, item_name, unit_price, barcode, vendor_id, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)", _
-            Array As Object(item.Get("item_id"), item.Get("item_code"), item.Get("item_name"), item.Get("unit_price"), barcode, vendorID, 1))
-	Next
+		' Replace local customer cache using a transaction for bulk writes
+		Try
+			Main.SQLProducts.ExecNonQuery("BEGIN TRANSACTION")
+			Main.SQLProducts.ExecNonQuery("DELETE FROM mst_customers")
+
+			For i = 0 To customers.Size - 1
+				Dim c As Map = customers.Get(i)
+				Dim cid As Int = 0
+				If c.ContainsKey("customer_id") Then cid = c.Get("customer_id")
+				Dim code As String = ""
+				If c.ContainsKey("customer_code") Then code = c.Get("customer_code")
+				Dim name As String = ""
+				If c.ContainsKey("customer_name") Then name = c.Get("customer_name")
+				Dim owner As String = ""
+				If c.ContainsKey("business_owner") Then owner = c.Get("business_owner")
+				Dim addr As String = ""
+				If c.ContainsKey("address") Then addr = c.Get("address")
+				Dim cat As String = ""
+				If c.ContainsKey("category") Then cat = c.Get("category")
+				Dim branchId As Int = 0
+				If c.ContainsKey("branch_id") Then branchId = c.Get("branch_id")
+
+				Main.SQLProducts.ExecNonQuery2( _
+					"INSERT OR REPLACE INTO mst_customers (customer_id, customer_code, customer_name, business_owner, address, is_active, branch_id, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", _
+					Array As Object(cid, code, name, owner, addr, 1, branchId, cat))
+			Next
+
+			Main.SQLProducts.ExecNonQuery("COMMIT")
+			Log("Cached " & customers.Size & " customers locally")
+		Catch
+			Try
+				Main.SQLProducts.ExecNonQuery("ROLLBACK")
+			Catch
+				Log(LastException.Message)
+			End Try
+			Log("ParseAndSaveCustomersFromServerResponse error while saving: " & LastException.Message)
+		End Try
+	Catch
+		Log("ParseAndSaveCustomersFromServerResponse error: " & LastException.Message)
+	End Try
 End Sub
 
 Private Sub ShowFetchErrorMessage(errorMessage As String)
@@ -550,24 +769,9 @@ Private Sub UpdateDashboardStatusLabels
 		lblFetchStatus.TextColor = Colors.Gray
 	End If
 
-	Dim pendingOrderCount As Int = 0
-	Dim rsOrders As ResultSet
-	Try
-		rsOrders = Main.SQLProducts.ExecQuery2( _
-            "SELECT COUNT(*) as count FROM orders WHERE sync_status = 'Holding' AND vendor_id = ? AND user_id = ?", _
-            Array As String(Main.VENDOR_ID, Main.LoggedInUserID))
-		If rsOrders.NextRow Then
-			pendingOrderCount = rsOrders.GetInt("count")
-		End If
-		rsOrders.Close
-	Catch
-		If rsOrders.IsInitialized Then rsOrders.Close
-		pendingOrderCount = 0
-	End Try
-
-	If pendingOrderCount > 0 Then
-		ToastMessageShow("You have " & pendingOrderCount & " orders waiting to sync", False)
-	End If
+	' pending order count is shown in history summary labels (no toast)
+	' Refresh history summary labels as well
+	UpdateHistorySummary
 End Sub
 
 Private Sub FormatTimeAgo(syncTimestamp As Long) As String
@@ -583,3 +787,41 @@ Private Sub FormatTimeAgo(syncTimestamp As Long) As String
 		Return (minutesAgo / 1440) & " days ago"
 	End If
 End Sub
+
+
+Private Sub UpdateHistorySummary
+	Dim todayStart As Long = DateTime.DateParse(DateTime.Date(DateTime.Now))
+	Dim todayEnd As Long = todayStart + DateTime.TicksPerDay
+
+	Dim rs As ResultSet
+
+	rs = Main.SQLProducts.ExecQuery2( _
+			"SELECT COUNT(*) AS total_orders, IFNULL(SUM(total_amount), 0) AS total_sales " & _
+			"FROM orders " & _
+			"WHERE vendor_id = ? AND user_id = ? AND date_created >= ? AND date_created < ?", _
+			Array As String(Main.VENDOR_ID, Main.LoggedInUserID, todayStart, todayEnd))
+
+	If rs.NextRow Then
+		lblTodaysOrders.Text = "Today's Orders: " & rs.GetInt("total_orders")
+		lblTodaySales.Text = "Today's Sales: ₱" & NumberFormat2(rs.GetDouble("total_sales"), 1, 2, 2, False)
+	End If
+	rs.Close
+
+	rs = Main.SQLProducts.ExecQuery2( _
+			"SELECT COUNT(*) AS pending_count " & _
+			"FROM orders " & _
+			"WHERE vendor_id = ? AND user_id = ? AND sync_status = 'Holding'", _
+			Array As String(Main.VENDOR_ID, Main.LoggedInUserID))
+
+	If rs.NextRow Then
+		lblPendingSync.Text = "Pending Sync: " & rs.GetInt("pending_count")
+	End If
+	rs.Close
+End Sub
+
+'search bar
+Private Sub etContentSearchOrder_TextChanged (Old As String, New As String)
+	LoadOrdersIntoList
+End Sub
+
+

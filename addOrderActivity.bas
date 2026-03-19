@@ -17,27 +17,32 @@ Sub Globals
 	' Cart - holds cart item maps with product info and quantity
 	Private CartItems As List
 
+	' Multi-selection tracking
+	Private SelectedItems As List           ' Stores selected items for deletion
+	Private SelectedIndices As List         ' Optional, can track indexes if needed for highlighting
+	Private SelectionMode As Boolean = False
+
 	' Stores info about the item the user is currently selecting a quantity for
 	Private SelectedItemID As Int
 	Private SelectedItemName As String
 	Private SelectedItemPrice As Double
-
+	
 	' Main cart screen
 	Private pnladdOrderActivityTop As Panel
 	Private pnladdOrderActivityWhole As Panel
 	Private pnlDim As Panel
-	Private svCartSummary As ScrollView
+	Private clvCartSummary As CustomListView
 	Private lblTotalItems As Label
 	Private lblTotalAmount As Label
 	Private bttnPurchaseNow As Button
 	Private lblExitOrderActivity As Label
 	Private bttnAddOrderActivity As Button
-
+	
 	' Product selection popup
 	Private pnlSelectItems As Panel
 	Private clvProducts As CustomListView
 	Private etSearchProducts As EditText
-	Private lblExitSelectItems As Label	
+	Private lblExitSelectItems As Label
 
 	' Quantity selector popup
 	Private pnlQuantity As Panel
@@ -48,7 +53,7 @@ Sub Globals
 	Private bttnAdd As Button
 	Private bttnAddToCartQty As Button
 	Private bttnCancelQty As Button
-
+	
 	' Purchase status popup
 	Private pnlPurchaseStatus As Panel
 	Private lblPurchaseStatusTitle As Label
@@ -58,6 +63,12 @@ Sub Globals
 	Private rbNotPaidBooked As RadioButton
 	Private bttnConfirmPurchaseStatus As Button
 	Private bttnCancelPurchaseStatus As Button
+	
+	' Delete selection buttons / popup
+	Private btnDeleteSelected As Button
+	Private btnNoDelete As Button
+	Private btnYesDelete As Button
+	Private PnlConfirmDelete As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -70,14 +81,19 @@ Sub Activity_Create(FirstTime As Boolean)
 	End If
 
 	CartItems.Initialize
+	SelectedItems.Initialize
+	SelectedIndices.Initialize
 
-	bttnPurchaseNow.Enabled = False
-	bttnPurchaseNow.Color = Colors.ARGB(80, 0, 0, 255)
+	bttnPurchaseNow.Enabled = True
+	bttnPurchaseNow.Color = Colors.ARGB(120, 200, 200, 200)
 
 	pnlPurchaseStatus.Visible = False
 	rbPaidReceived.Checked = True
 	rbPaidBooked.Checked = False
 	rbNotPaidBooked.Checked = False
+	btnDeleteSelected.Enabled = True
+	btnDeleteSelected.Color = Colors.ARGB(80, 200, 200, 200)
+	PnlConfirmDelete.Visible = False
 
 	LoadProductsIntoList
 End Sub
@@ -92,9 +108,6 @@ End Sub
 ' TRANSACTION NUMBER
 ' ======================
 
-' Creates a unique transaction number for this vendor
-' Format: V1-001, V1-002, V2-001 (vendor ID + sequence)
-' Each vendor has their own sequence so there are NO collisions between devices
 Sub GenerateTransactionNumber As String
 	Try
 		Dim safeDeviceID As String = Main.DEVICE_ID
@@ -130,7 +143,6 @@ End Sub
 ' MAIN CART SCREEN
 ' ======================
 
-' Opens the product selection popup
 Private Sub bttnAddOrderActivity_Click
 	pnlDim.Visible = True
 	pnlSelectItems.Visible = True
@@ -138,37 +150,35 @@ Private Sub bttnAddOrderActivity_Click
 	pnlSelectItems.BringToFront
 End Sub
 
-' Closes the product selection popup
 Private Sub lblExitSelectItems_Click
 	pnlDim.Visible = False
 	pnlSelectItems.Visible = False
 End Sub
 
-' Goes back to the dashboard without saving
 Private Sub lblExitOrderActivity_Click
 	Activity.Finish
 End Sub
 
-' Saves the order and returns to dashboard
 Private Sub bttnPurchaseNow_Click
 	If CartItems.Size = 0 Then
 		ToastMessageShow("Add items first", True)
 		Return
 	End If
 
-	ShowPurchaseStatusPopup
-End Sub
+	' Make sure dim panel is visible and on top
+	pnlDim.Visible = True
+	pnlDim.BringToFront
 
-Private Sub ShowPurchaseStatusPopup
+	' Show the purchase status popup
+	pnlPurchaseStatus.Visible = True
+	pnlPurchaseStatus.BringToFront
+
+	' Reset radio buttons
 	rbPaidReceived.Checked = True
 	rbPaidBooked.Checked = False
 	rbNotPaidBooked.Checked = False
-
-	pnlDim.Visible = True
-	pnlDim.BringToFront
-	pnlPurchaseStatus.Visible = True
-	pnlPurchaseStatus.BringToFront
 End Sub
+
 
 Private Sub HidePurchaseStatusPopup
 	pnlPurchaseStatus.Visible = False
@@ -217,13 +227,13 @@ Private Sub rbPaidBooked_CheckedChange(Checked As Boolean)
 	rbPaidReceived.Checked = False
 	rbNotPaidBooked.Checked = False
 End Sub
+
 Private Sub rbNotPaidBooked_CheckedChange(Checked As Boolean)
 	If Checked = False Then Return
 	rbPaidReceived.Checked = False
 	rbPaidBooked.Checked = False
 End Sub
 
-' Clears the cart list and resets the Purchase button back to disabled
 Private Sub ClearCartAndResetUI
 	CartItems.Clear
 	RefreshCartDisplay
@@ -234,6 +244,7 @@ Private Sub ClearCartAndResetUI
 	rbPaidReceived.Checked = True
 	rbPaidBooked.Checked = False
 	rbNotPaidBooked.Checked = False
+	ExitSelectionMode
 End Sub
 
 Private Sub pnlDim_Click
@@ -243,12 +254,10 @@ End Sub
 ' PRODUCT SELECTION POPUP
 ' ======================
 
-' Triggered when user types in the search box - reloads the list with filter
 Private Sub etSearchProducts_TextChanged(Old As String, New As String)
 	LoadProductsIntoList
 End Sub
 
-' Loads active products into the product list, filtered by the search box if needed
 Private Sub LoadProductsIntoList
 	clvProducts.Clear
 
@@ -310,23 +319,19 @@ Private Sub LoadProductsIntoList
 	rs.Close
 End Sub
 
-' Triggered when user taps a product - opens the quantity selector popup
 Private Sub clvProducts_ItemClick(Index As Int, Value As Object)
 	Dim itemID As Int = Value
 
 	Dim rs As ResultSet = Main.SQLProducts.ExecQuery2("SELECT * FROM items WHERE item_id=?", Array As String(itemID))
 
 	If rs.NextRow Then
-		' Remember which item was selected
 		SelectedItemID = itemID
 		SelectedItemName = rs.GetString("item_name")
 		SelectedItemPrice = rs.GetDouble("unit_price")
 
-		' Show item info and reset quantity to 1
 		lblSelectedItem.Text = SelectedItemName & Chr(10) & "₱" & SelectedItemPrice
 		etQuantityValue.Text = "1"
 
-		' Open quantity popup on top of the dim overlay
 		pnlDim.Visible = True
 		pnlDim.BringToFront
 		pnlQuantity.Visible = True
@@ -339,7 +344,6 @@ End Sub
 ' QUANTITY SELECTOR POPUP
 ' ======================
 
-' Decreases quantity by 1 (minimum is 1)
 Private Sub bttnMinus_Click
 	Dim currentQty As Int = etQuantityValue.Text
 	If currentQty > 1 Then
@@ -349,7 +353,6 @@ Private Sub bttnMinus_Click
 	End If
 End Sub
 
-' Increases quantity by 1 (maximum is 999)
 Private Sub bttnAdd_Click
 	Dim currentQty As Int = etQuantityValue.Text
 	If currentQty < 999 Then
@@ -359,7 +362,6 @@ Private Sub bttnAdd_Click
 	End If
 End Sub
 
-' Adds the selected item to the cart with the chosen quantity
 Private Sub bttnAddToCartQty_Click
 	If IsNumber(etQuantityValue.Text) = False Then
 		ToastMessageShow("Please enter a valid number", True)
@@ -394,20 +396,18 @@ Private Sub bttnAddToCartQty_Click
 	pnlSelectItems.Visible = False
 End Sub
 
-' Closes the quantity selector without adding to cart
 Private Sub bttnCancelQty_Click
 	pnlQuantity.Visible = False
 	pnlDim.Visible = False
 End Sub
 
 ' ======================
-' CART DISPLAY
+' CART DISPLAY (CustomListView version)
 ' ======================
 
-' Rebuilds the cart summary showing all items, quantities, statuses, and the running total
 Private Sub RefreshCartDisplay
-	svCartSummary.Panel.RemoveAllViews
-	Dim top As Int = 0
+	clvCartSummary.Clear
+
 	Dim totalAmount As Double = 0
 	Dim totalQuantity As Int = 0
 
@@ -420,7 +420,7 @@ Private Sub RefreshCartDisplay
 		Dim pnl As Panel
 		pnl.Initialize("")
 		pnl.Color = Colors.White
-		pnl.SetLayout(0, top, svCartSummary.Width, 70dip)
+		pnl.SetLayout(0, 0, clvCartSummary.AsView.Width, 70dip)
 
 		Dim lblName As Label
 		lblName.Initialize("")
@@ -448,14 +448,12 @@ Private Sub RefreshCartDisplay
 		pnl.AddView(lblQty, lblQty.Left, lblQty.Top, lblQty.Width, lblQty.Height)
 		pnl.AddView(lblLineTotal, lblLineTotal.Left, lblLineTotal.Top, lblLineTotal.Width, lblLineTotal.Height)
 
-		svCartSummary.Panel.AddView(pnl, 0, top, pnl.Width, pnl.Height)
-		top = top + pnl.Height + 3dip
+		clvCartSummary.Add(pnl, CartItems.IndexOf(cartItem))
 
 		totalAmount = totalAmount + lineTotal
 		totalQuantity = totalQuantity + quantity
 	Next
 
-	svCartSummary.Panel.Height = top
 	lblTotalItems.Text = "Items: " & CartItems.Size & " entries (" & totalQuantity & " total)"
 	lblTotalAmount.Text = "Total: ₱" & NumberFormat2(totalAmount, 1, 2, 2, False)
 End Sub
@@ -464,7 +462,6 @@ End Sub
 ' SAVE ORDER
 ' ======================
 
-' Saves the current cart as a new order in the local database
 Private Sub SaveOrderToLocalDatabase(FulfillmentStatus As String)
 	Try
 		If Main.VENDOR_ID <= 0 Or Main.LoggedInUserID <= 0 Then
@@ -482,8 +479,8 @@ Private Sub SaveOrderToLocalDatabase(FulfillmentStatus As String)
 		Next
 
 		Main.SQLProducts.ExecNonQuery2( _
-            "INSERT INTO orders (vendor_id, user_id, transaction_number, device_id, date_created, status, total_amount, sync_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", _
-            Array As Object(Main.VENDOR_ID, Main.LoggedInUserID, transactionNumber, Main.DEVICE_ID, DateTime.Now, "Pending", total, "Holding"))
+			"INSERT INTO orders (vendor_id, user_id, transaction_number, device_id, date_created, status, total_amount, sync_status, customer_id, customer_name, customer_owner, customer_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", _
+			Array As Object(Main.VENDOR_ID, Main.LoggedInUserID, transactionNumber, Main.DEVICE_ID, DateTime.Now, "Pending", total, "Holding", Main.SELECTED_CUSTOMER_ID, Main.SELECTED_CUSTOMER_NAME, Main.SELECTED_CUSTOMER_OWNER, Main.SELECTED_CUSTOMER_ADDRESS))
 
 		Dim rsNewOrder As ResultSet = Main.SQLProducts.ExecQuery("SELECT last_insert_rowid() AS id")
 		rsNewOrder.NextRow
@@ -510,9 +507,6 @@ Private Sub SaveOrderToLocalDatabase(FulfillmentStatus As String)
 	End Try
 End Sub
 
-
-
-' Converts fulfillment status to payment status
 Private Sub GetPaymentStatusFromFulfillmentStatus(FulfillmentStatus As String) As String
 	If FulfillmentStatus = "Paid-Received" Or FulfillmentStatus = "Paid-Booked" Then
 		Return "Paid"
@@ -521,7 +515,6 @@ Private Sub GetPaymentStatusFromFulfillmentStatus(FulfillmentStatus As String) A
 	End If
 End Sub
 
-' Converts fulfillment status to delivery status
 Private Sub GetDeliveryStatusFromFulfillmentStatus(FulfillmentStatus As String) As String
 	If FulfillmentStatus = "Paid-Received" Then
 		Return "Received"
@@ -530,7 +523,6 @@ Private Sub GetDeliveryStatusFromFulfillmentStatus(FulfillmentStatus As String) 
 	End If
 End Sub
 
-' Adds one cart entry with quantity and fulfillment status
 Private Sub AddCartItemToList(ProductID As Int, ItemName As String, UnitPrice As Double, Quantity As Int)
 	For Each cartItem As Map In CartItems
 		Dim existingProductID As Int = cartItem.Get("product_id")
@@ -549,3 +541,128 @@ Private Sub AddCartItemToList(ProductID As Int, ItemName As String, UnitPrice As
 	cartItem.Put("quantity", Quantity)
 	CartItems.Add(cartItem)
 End Sub
+
+
+Private Sub ToggleSelection(Index As Int)
+	If SelectedIndices.IndexOf(Index) > -1 Then
+		SelectedIndices.RemoveAt(SelectedIndices.IndexOf(Index))
+		HighlightItem(Index, False)
+	Else
+		SelectedIndices.Add(Index)
+		HighlightItem(Index, True)
+	End If
+
+	Dim count As Int = SelectedIndices.Size
+
+	btnDeleteSelected.Text = "Delete (" & count & ")"
+
+	If count > 0 Then
+		btnDeleteSelected.Enabled = True
+		btnDeleteSelected.Color = Colors.Red
+	Else
+		btnDeleteSelected.Enabled = False
+		btnDeleteSelected.Color = Colors.ARGB(80, 200, 200, 200)
+		ExitSelectionMode
+	End If
+End Sub
+
+Private Sub HighlightItem(Index As Int, Selected As Boolean)
+	If Index < 0 Or Index >= clvCartSummary.Size Then Return
+
+	Dim pnl As B4XView = clvCartSummary.GetPanel(Index)
+
+	If Selected Then
+		pnl.Color = Colors.LightGray
+	Else
+		pnl.Color = Colors.White
+	End If
+End Sub
+
+Private Sub ExitSelectionMode
+	SelectionMode = False
+
+	' Remove highlight from all selected indexes
+	For Each i As Int In SelectedIndices
+		HighlightItem(i, False)
+	Next
+
+	SelectedIndices.Clear
+
+	btnDeleteSelected.Enabled = False
+	btnDeleteSelected.Color = Colors.ARGB(80, 200, 200, 200)
+	btnDeleteSelected.Text = "Delete"
+	btnDeleteSelected.Visible = True
+End Sub
+
+Private Sub clvCartSummary_ItemLongClick (Index As Int, Value As Object)
+	SelectionMode = True
+	btnDeleteSelected.Visible = True
+	ToggleSelection(Index)
+End Sub
+
+Private Sub clvCartSummary_ItemClick (Index As Int, Value As Object)
+	If SelectionMode = False Then Return
+	ToggleSelection(Index)
+End Sub
+
+Private Sub btnCancelSelection_Click
+	ExitSelectionMode
+End Sub
+
+Private Sub btnDeleteSelected_Click
+	' Always allow click, but validate here
+
+	' 1. Check if cart is empty
+	If CartItems.Size = 0 Then
+		ToastMessageShow("No items to delete", True)
+		Return
+	End If
+
+	' 2. Check if user selected anything
+	If SelectedIndices.Size = 0 Then
+		ToastMessageShow("Long press item(s) to select for deletion", True)
+		Return
+	End If
+
+	' 3. Show confirm delete popup
+	PnlConfirmDelete.Visible = True
+	PnlConfirmDelete.BringToFront
+End Sub
+
+Private Sub btnYesDelete_Click
+	' Sort SelectedIndices DESCENDING manually
+	For i = 0 To SelectedIndices.Size - 2
+		For j = i + 1 To SelectedIndices.Size - 1
+			If SelectedIndices.Get(i) < SelectedIndices.Get(j) Then
+				Dim temp As Int = SelectedIndices.Get(i)
+				SelectedIndices.Set(i, SelectedIndices.Get(j))
+				SelectedIndices.Set(j, temp)
+			End If
+		Next
+	Next
+
+	' Now delete safely
+	For Each index As Int In SelectedIndices
+		If index >= 0 And index < CartItems.Size Then
+			CartItems.RemoveAt(index)
+		End If
+	Next
+
+	SelectedIndices.Clear
+	RefreshCartDisplay
+
+	PnlConfirmDelete.Visible = False
+	btnDeleteSelected.Enabled = False
+	btnDeleteSelected.Color = Colors.ARGB(80, 200, 200, 200)
+	btnDeleteSelected.Text = "Delete"
+	ExitSelectionMode
+End Sub
+
+Private Sub btnNoDelete_Click
+	PnlConfirmDelete.Visible = False
+
+End Sub
+
+
+'search bar
+
