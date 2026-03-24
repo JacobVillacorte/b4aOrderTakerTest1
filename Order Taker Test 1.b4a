@@ -70,6 +70,7 @@ Sub Process_Globals
 	Public AssignedVendors As List
 	' Selected customer (set by CustomerSelection activity)
 	Public SELECTED_CUSTOMER_ID As Int = 0
+	Public SELECTED_CUSTOMER_CODE As String = ""
 	Public SELECTED_CUSTOMER_NAME As String = ""
 	Public SELECTED_CUSTOMER_OWNER As String = ""
 	Public SELECTED_CUSTOMER_ADDRESS As String = ""

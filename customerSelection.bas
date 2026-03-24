@@ -6,7 +6,7 @@ Version=13.4
 @EndOfDesignText@
 #Region  Activity Attributes 
 	#FullScreen: False
-	#IncludeTitle: False
+	#IncludeTitle: True
 #End Region
 
 Sub Process_Globals
@@ -33,11 +33,12 @@ Sub Globals
 	Private bttnGoBackToDashboard As Button
 
 	' Debounce timer for search
-	
+
 	Private lastSearchText As String
 
 	' Pending selection shown in the Yes/No popup
 	Private pendingSelectedCustomerID As Int
+	Private pendingSelectedCustomerCode As String
 	Private pendingSelectedCustomerName As String
 	Private pendingSelectedCustomerOwner As String
 	Private pendingSelectedCustomerAddress As String
@@ -70,6 +71,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	End If
 
 	pendingSelectedCustomerID = 0
+	pendingSelectedCustomerCode = Main.SELECTED_CUSTOMER_CODE
+	Main.SELECTED_CUSTOMER_CODE = ""
 	confirmedSelectedCustomerID = Main.SELECTED_CUSTOMER_ID
 	If confirmedSelectedCustomerID <> 0 Then
 		If bttnConfirm.IsInitialized Then
@@ -90,7 +93,11 @@ End Sub
 
 
 Private Sub pnlDim_Click
-	
+	If pnlConfirmCustomer.IsInitialized Then pnlConfirmCustomer.Visible = False
+	pnlDim.Visible = False
+	pnlDim.Enabled = False
+	pnlDim.SendToBack
+	pendingSelectedCustomerID = 0
 End Sub
 
 ' Debounce tick - perform search
@@ -145,7 +152,7 @@ Private Sub DoSearch(query As String)
 
 		Dim lblName As Label
 		lblName.Initialize("")
-		lblName.Text = rs.GetString("customer_name")
+		lblName.Text = rs.GetString("customer_code") & " - " & rs.GetString("customer_name")
 		lblName.TextSize = 16
 		lblName.SetLayout(10dip, 5dip, 80%x, 25dip)
 
@@ -199,10 +206,12 @@ Private Sub ShowCustomerConfirmByID(cid As Int)
 	rs.Position = 0
 
 	pendingSelectedCustomerName = rs.GetString("customer_name")
+	pendingSelectedCustomerCode = rs.GetString("customer_code")
 	pendingSelectedCustomerOwner = rs.GetString("business_owner")
 	pendingSelectedCustomerAddress = rs.GetString("address")
 	rs.Close
 
+	lblConfirmCustomer.Text = pendingSelectedCustomerCode
 	lblConfirmName.Text = pendingSelectedCustomerName
 	lblConfirmOwner.Text = pendingSelectedCustomerOwner
 	lblConfirmAddress.Text = pendingSelectedCustomerAddress
@@ -233,6 +242,7 @@ Private Sub bttnConfirmChoose_Click
 	If pendingSelectedCustomerID = 0 Then Return
 
 	confirmedSelectedCustomerID = pendingSelectedCustomerID
+	Main.SELECTED_CUSTOMER_CODE = pendingSelectedCustomerCode
 	' update the cached confirmed fields
 	Main.SELECTED_CUSTOMER_ID = 0 ' do not set main yet; only set when user presses final Confirm
 
@@ -259,6 +269,7 @@ Private Sub bttnConfirmProceed_Click
 	If pendingSelectedCustomerID = 0 Then Return
 
 	confirmedSelectedCustomerID = pendingSelectedCustomerID
+	Main.SELECTED_CUSTOMER_CODE = pendingSelectedCustomerCode
 	Main.SELECTED_CUSTOMER_ID = 0
 
 	pnlConfirmCustomer.Visible = False
@@ -293,6 +304,7 @@ Private Sub bttnConfirm_Click
 	rs.Position = 0
 
 	Main.SELECTED_CUSTOMER_ID = rs.GetInt("customer_id")
+	Main.SELECTED_CUSTOMER_CODE = rs.GetString("customer_code")
 	Main.SELECTED_CUSTOMER_NAME = rs.GetString("customer_name")
 	Main.SELECTED_CUSTOMER_OWNER = rs.GetString("business_owner")
 	Main.SELECTED_CUSTOMER_ADDRESS = rs.GetString("address")

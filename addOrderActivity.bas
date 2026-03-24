@@ -471,16 +471,21 @@ Private Sub SaveOrderToLocalDatabase(FulfillmentStatus As String)
 
 		Dim transactionNumber As String = GenerateTransactionNumber
 		Dim total As Double = 0
+		Dim totalQuantity As Int = 0
 
 		For Each cartItem As Map In CartItems
 			Dim unitPrice As Double = cartItem.Get("unit_price")
 			Dim quantity As Int = cartItem.Get("quantity")
 			total = total + (unitPrice * quantity)
+			totalQuantity = totalQuantity + quantity
 		Next
 
+		Dim bookingValue As Int = GetBookingFromFulfillmentStatus(FulfillmentStatus)
+		Dim prepaidValue As Int = GetPrepaidFromFulfillmentStatus(FulfillmentStatus)
+
 		Main.SQLProducts.ExecNonQuery2( _
-			"INSERT INTO orders (vendor_id, user_id, transaction_number, device_id, date_created, status, total_amount, sync_status, customer_id, customer_name, customer_owner, customer_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", _
-			Array As Object(Main.VENDOR_ID, Main.LoggedInUserID, transactionNumber, Main.DEVICE_ID, DateTime.Now, "Pending", total, "Holding", Main.SELECTED_CUSTOMER_ID, Main.SELECTED_CUSTOMER_NAME, Main.SELECTED_CUSTOMER_OWNER, Main.SELECTED_CUSTOMER_ADDRESS))
+			"INSERT INTO orders (vendor_id, user_id, convention_id, transaction_number, device_id, date_created, status, total_amount, item_count, booking, prepaid, sync_status, customer_id, customer_code, customer_name, customer_owner, customer_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", _
+			Array As Object(Main.VENDOR_ID, Main.LoggedInUserID, Main.LoggedInConventionID, transactionNumber, Main.DEVICE_ID, DateTime.Now, FulfillmentStatus, total, totalQuantity, bookingValue, prepaidValue, "Holding", Main.SELECTED_CUSTOMER_ID, Main.SELECTED_CUSTOMER_CODE, Main.SELECTED_CUSTOMER_NAME, Main.SELECTED_CUSTOMER_OWNER, Main.SELECTED_CUSTOMER_ADDRESS))
 
 		Dim rsNewOrder As ResultSet = Main.SQLProducts.ExecQuery("SELECT last_insert_rowid() AS id")
 		rsNewOrder.NextRow
@@ -505,6 +510,20 @@ Private Sub SaveOrderToLocalDatabase(FulfillmentStatus As String)
 		Log("SaveOrderToLocalDatabase error: " & LastException.Message)
 		ToastMessageShow("Failed to save order. Please try again.", True)
 	End Try
+End Sub
+
+Private Sub GetBookingFromFulfillmentStatus(FulfillmentStatus As String) As Int
+	If FulfillmentStatus = "Paid-Received" Then
+		Return 1
+	End If
+	Return 0
+End Sub
+
+Private Sub GetPrepaidFromFulfillmentStatus(FulfillmentStatus As String) As Int
+	If FulfillmentStatus = "Paid-Received" Or FulfillmentStatus = "Paid-Booked" Then
+		Return 1
+	End If
+	Return 0
 End Sub
 
 Private Sub GetPaymentStatusFromFulfillmentStatus(FulfillmentStatus As String) As String
@@ -663,6 +682,4 @@ Private Sub btnNoDelete_Click
 
 End Sub
 
-
-'search bar
 

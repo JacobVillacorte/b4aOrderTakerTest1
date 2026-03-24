@@ -22,6 +22,6 @@ ModuleClosedNodes4=
 ModuleClosedNodes5=
 ModuleClosedNodes6=
 ModuleClosedNodes7=
-NavigationStack=OrderTakerDashboard,bttnFetchProducts_Click,479,0,OrderTakerDashboard,UpdateHistorySummary,785,0,OrderTakerDashboard,FormatTimeAgo,781,0,OrderTakerDashboard,UpdateDashboardStatusLabels,798,0,OrderTakerDashboard,Globals,13,0,Visual Designer,ordertakerdashboard.bal,-100,6,OrderTakerDashboard,Activity_Create,59,0,Visual Designer,addOrderActivity.bal,-100,6,Visual Designer,customerSelection.bal,-100,2,addOrderActivity,Globals,51,0
+NavigationStack=customerSelection,Globals,16,0,customerSelection,etSearchCustomers_TextChanged,106,0,customerSelection,tmrSearch_Tick,95,0,addOrderActivity,bttnConfirmPurchaseStatus_Click,200,0,Visual Designer,customerSelection.bal,-100,6,addOrderActivity,bttnPurchaseNow_Click,174,0,Visual Designer,addOrderActivity.bal,-100,6,addOrderActivity,GetSelectedFulfillmentStatus,186,0,customerSelection,bttnGoBackToDashboard_Click,314,0,customerSelection,bttnConfirm_Click,304,0,OrderTakerDashboard,UpdateHistorySummary,1006,0
 SelectedBuild=0
 VisibleModules=2,4,5,1,3

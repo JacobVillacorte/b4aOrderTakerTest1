@@ -50,6 +50,8 @@ Sub Globals
 	' Track active HTTP jobs so we can release/cancel them on pause
 	Private currentFetchJob As HttpJob
 	Private currentCustomerJob As HttpJob
+	Private currentSyncJob As HttpJob
+	Private syncOrdersCompletedCount As Int
 	'Dashboard Status
 	Private lblPendingSync As Label
 	Private lblTodaySales As Label
@@ -94,6 +96,15 @@ Sub Activity_Pause(UserClosed As Boolean)
 		End Try
 		currentCustomerJob = Null
 	End If
+
+	If currentSyncJob <> Null Then
+		Try
+			If currentSyncJob.IsInitialized Then currentSyncJob.Release
+		Catch
+			Log("Activity_Pause currentSyncJob release error: " & LastException.Message)
+		End Try
+		currentSyncJob = Null
+	End If
 End Sub
 
 ' Creates orders/order_items tables if they don't exist
@@ -128,15 +139,20 @@ Sub EnsureLocalSchema
 	' orders table
 	AddColumnIfMissing("orders", "user_id", "INTEGER DEFAULT 0")
 	AddColumnIfMissing("orders", "vendor_id", "INTEGER DEFAULT 0")
+	AddColumnIfMissing("orders", "convention_id", "INTEGER DEFAULT 0")
 	AddColumnIfMissing("orders", "sync_status", "TEXT DEFAULT 'Holding'")
 	AddColumnIfMissing("orders", "synced_at", "INTEGER DEFAULT 0")
 	AddColumnIfMissing("orders", "transaction_number", "TEXT")
 	AddColumnIfMissing("orders", "device_id", "TEXT")
 	' customer fields for orders (added safely if missing)
 	AddColumnIfMissing("orders", "customer_id", "INTEGER DEFAULT 0")
+	AddColumnIfMissing("orders", "customer_code", "TEXT DEFAULT ''")
 	AddColumnIfMissing("orders", "customer_name", "TEXT DEFAULT ''")
 	AddColumnIfMissing("orders", "customer_owner", "TEXT DEFAULT ''")
 	AddColumnIfMissing("orders", "customer_address", "TEXT DEFAULT ''")
+	AddColumnIfMissing("orders", "item_count", "INTEGER DEFAULT 0")
+	AddColumnIfMissing("orders", "booking", "INTEGER DEFAULT 0")
+	AddColumnIfMissing("orders", "prepaid", "INTEGER DEFAULT 0")
 
 	' order_items table
 	AddColumnIfMissing("order_items", "fulfillment_status", "TEXT DEFAULT ''")
@@ -361,14 +377,6 @@ Private Sub ShowOrderDetails(orderID As Int)
 			transactionNumber = ""
 		End Try
 
-		Dim syncStatus As String = ""
-		Try
-			syncStatus = cursorOrder.GetString("sync_status")
-			If syncStatus = Null Then syncStatus = ""
-		Catch
-			syncStatus = ""
-		End Try
-
 		Dim orderDate As Long = 0
 		Try
 			orderDate = cursorOrder.GetLong("date_created")
@@ -388,6 +396,7 @@ Private Sub ShowOrderDetails(orderID As Int)
 		Catch
 			orderStatus = ""
 		End Try
+		orderStatus = GetOrderDisplayStatus(orderID, orderStatus)
 
 		' Try to read customer fields if present (EnsureLocalSchema adds them)
 		Dim customerName As String = ""
@@ -433,12 +442,9 @@ Private Sub ShowOrderDetails(orderID As Int)
 				Dim quantity As Int = cursorItems.GetInt("quantity")
 				Dim price As Double = cursorItems.GetDouble("price")
 
-				Dim fulfillmentStatus As String = cursorItems.GetString("fulfillment_status")
-				If fulfillmentStatus = Null Then fulfillmentStatus = "Unknown"
-
 				itemsText = itemsText & _
                     "• " & itemName & " x" & quantity & " (@₱" & NumberFormat2(price, 1, 2, 2, False) & ")" & CRLF & _
-                    "  Status: " & fulfillmentStatus & CRLF
+					""
 			Next
 		End If
 
@@ -451,7 +457,6 @@ Private Sub ShowOrderDetails(orderID As Int)
 			(IIf(customerAddress <> "", "Address: " & customerAddress & CRLF, "")) & _
 			"Date: " & DateTime.Date(orderDate) & CRLF & _
 			"Status: " & orderStatus & CRLF & _
-			"Sync: " & syncStatus & CRLF & _
 			"Total: ₱" & NumberFormat2(totalAmount, 1, 2, 2, False) & CRLF & CRLF & _
 			"Items:" & CRLF & itemsText
 
@@ -662,9 +667,211 @@ Private Sub ParseAndSaveCustomersFromServerResponse(response As String)
 	End Try
 End Sub
 
+Private Sub bttnSyncOrdersNow_Click
+	SyncNextPendingOrder
+End Sub
+
+Private Sub SyncNextPendingOrder
+	If Main.SQLProducts.IsInitialized = False Then
+		ToastMessageShow("Local database is not ready.", True)
+		Return
+	End If
+
+	If syncOrdersCompletedCount < 0 Then syncOrdersCompletedCount = 0
+
+	Dim rsOrder As ResultSet = Main.SQLProducts.ExecQuery("SELECT * FROM orders WHERE IFNULL(sync_status, '') <> 'Synced' ORDER BY date_created ASC LIMIT 1")
+	If rsOrder.RowCount = 0 Then
+		rsOrder.Close
+		If syncOrdersCompletedCount > 0 Then
+			ToastMessageShow("Successfully synced.", False)
+		Else
+			ToastMessageShow("No pending orders to sync.", False)
+		End If
+		syncOrdersCompletedCount = 0
+		LoadOrdersIntoList
+		UpdateDashboardStatusLabels
+		Return
+	End If
+
+	rsOrder.Position = 0
+	Dim localOrderID As Int = rsOrder.GetInt("order_id")
+	Dim payload As String = BuildOrderSyncPayload(rsOrder)
+	rsOrder.Close
+
+	Dim syncJob As HttpJob
+	syncJob.Initialize("SyncOrder", Me)
+	currentSyncJob = syncJob
+	syncJob.PostString(Main.API_URL & "sync_order.php", payload)
+
+	Wait For (syncJob) JobDone(jobSync As HttpJob)
+	If jobSync.Success Then
+		Try
+			Dim parser As JSONParser
+			parser.Initialize(jobSync.GetString)
+			Dim root As Map = parser.NextObject
+			Dim status As String = root.Get("status")
+			If status = "success" Then
+				Main.SQLProducts.ExecNonQuery2("UPDATE orders SET sync_status = 'Synced', synced_at = ? WHERE order_id = ?", Array As Object(DateTime.Now, localOrderID))
+				syncOrdersCompletedCount = syncOrdersCompletedCount + 1
+				LoadOrdersIntoList
+				UpdateDashboardStatusLabels
+				jobSync.Release
+				currentSyncJob = Null
+				SyncNextPendingOrder
+				Return
+			Else
+				syncOrdersCompletedCount = 0
+				ToastMessageShow("Sync failed: " & root.Get("message"), True)
+			End If
+		Catch
+			syncOrdersCompletedCount = 0
+			ToastMessageShow("Sync response parse failed: " & LastException.Message, True)
+		End Try
+	Else
+		syncOrdersCompletedCount = 0
+		ToastMessageShow("Sync network error: " & jobSync.ErrorMessage, True)
+	End If
+
+	jobSync.Release
+	currentSyncJob = Null
+End Sub
+
+Private Sub BuildOrderSyncPayload(rsOrder As ResultSet) As String
+	Dim localOrderID As Int = rsOrder.GetInt("order_id")
+	Dim createdAt As Long = DateTime.Now
+	Try
+		createdAt = rsOrder.GetLong("date_created")
+	Catch
+		createdAt = DateTime.Now
+	End Try
+	If createdAt <= 0 Then createdAt = DateTime.Now
+
+	Dim itemCount As Int = 0
+	If HasColumn("orders", "item_count") Then itemCount = rsOrder.GetInt("item_count")
+	If itemCount <= 0 Then itemCount = GetLocalOrderItemCount(localOrderID)
+
+	Dim bookingValue As Int = 0
+	If HasColumn("orders", "booking") Then bookingValue = rsOrder.GetInt("booking")
+
+	Dim prepaidValue As Int = 0
+	If HasColumn("orders", "prepaid") Then prepaidValue = rsOrder.GetInt("prepaid")
+
+	Dim customerCode As String = "0"
+	If HasColumn("orders", "customer_code") Then customerCode = rsOrder.GetString("customer_code")
+	If customerCode = Null Or customerCode.Trim = "" Then customerCode = "0"
+
+	Dim orderHeader As Map
+	orderHeader.Initialize
+	orderHeader.Put("vendor_id", rsOrder.GetInt("vendor_id"))
+	orderHeader.Put("user_id", rsOrder.GetInt("user_id"))
+	orderHeader.Put("convention_id", GetOrderConventionID(rsOrder))
+	orderHeader.Put("order_date", FormatSqlDate(createdAt))
+	orderHeader.Put("order_dt", FormatSqlDateTime(createdAt))
+	orderHeader.Put("item_count", itemCount)
+	orderHeader.Put("total_amount", rsOrder.GetDouble("total_amount"))
+	orderHeader.Put("booking", bookingValue)
+	orderHeader.Put("customer_code", customerCode)
+	orderHeader.Put("status", "O")
+	orderHeader.Put("transaction_number", rsOrder.GetString("transaction_number"))
+	orderHeader.Put("device_id", rsOrder.GetString("device_id"))
+	orderHeader.Put("prepaid", prepaidValue)
+
+	Dim details As List
+	details.Initialize
+
+	Dim rsItems As ResultSet = Main.SQLProducts.ExecQuery2( _
+		"SELECT oi.product_id, oi.quantity, oi.price " & _
+		"FROM order_items oi " & _
+		"WHERE oi.order_id = ? ORDER BY oi.order_item_id", _
+		Array As String(localOrderID))
+
+	Do While rsItems.NextRow
+		Dim itemMap As Map
+		itemMap.Initialize
+		Dim quantity As Int = rsItems.GetInt("quantity")
+		Dim unitPrice As Double = rsItems.GetDouble("price")
+
+		itemMap.Put("item_id", rsItems.GetInt("product_id"))
+		itemMap.Put("quantity", quantity)
+		itemMap.Put("unit_price", unitPrice)
+		details.Add(itemMap)
+	Loop
+	rsItems.Close
+
+	Dim root As Map
+	root.Initialize
+	root.Put("order_header", orderHeader)
+	root.Put("order_details", details)
+
+	Dim gen As JSONGenerator
+	gen.Initialize(root)
+	Return gen.ToString
+End Sub
+
+Private Sub FormatSqlDate(ticks As Long) As String
+	Dim oldDateFormat As String = DateTime.DateFormat
+	DateTime.DateFormat = "yyyy-MM-dd"
+	Dim value As String = DateTime.Date(ticks)
+	DateTime.DateFormat = oldDateFormat
+	Return value
+End Sub
+
+Private Sub FormatSqlDateTime(ticks As Long) As String
+	Dim oldDateFormat As String = DateTime.DateFormat
+	Dim oldTimeFormat As String = DateTime.TimeFormat
+	DateTime.DateFormat = "yyyy-MM-dd"
+	DateTime.TimeFormat = "HH:mm:ss"
+	Dim value As String = DateTime.Date(ticks) & " " & DateTime.Time(ticks)
+	DateTime.DateFormat = oldDateFormat
+	DateTime.TimeFormat = oldTimeFormat
+	Return value
+End Sub
+
+Private Sub GetLocalOrderItemCount(orderId As Int) As Int
+	Dim totalQuantity As Int = 0
+	Dim rs As ResultSet = Main.SQLProducts.ExecQuery2("SELECT IFNULL(SUM(quantity), 0) AS total_qty FROM order_items WHERE order_id = ?", Array As String(orderId))
+	If rs.NextRow Then
+		totalQuantity = rs.GetInt("total_qty")
+	End If
+	rs.Close
+	Return totalQuantity
+End Sub
+
+Private Sub GetOrderConventionID(rsOrder As ResultSet) As Int
+	If HasColumn("orders", "convention_id") Then
+		Dim conventionId As Int = rsOrder.GetInt("convention_id")
+		If conventionId > 0 Then Return conventionId
+	End If
+	Return Main.LoggedInConventionID
+End Sub
+
 Private Sub ShowFetchErrorMessage(errorMessage As String)
 	lblFetchStatus.Text = "✗ " & errorMessage
 	lblFetchStatus.TextColor = Colors.Red
+End Sub
+
+Private Sub GetOrderDisplayStatus(orderID As Int, fallbackStatus As String) As String
+	If fallbackStatus <> "" And fallbackStatus <> "Pending" Then
+		Return fallbackStatus
+	End If
+
+	Try
+		Dim rs As ResultSet = Main.SQLProducts.ExecQuery2( _
+			"SELECT fulfillment_status FROM order_items WHERE order_id = ? LIMIT 1", _
+			Array As String(orderID))
+		If rs.NextRow Then
+			Dim fulfillmentStatus As String = rs.GetString("fulfillment_status")
+			If fulfillmentStatus <> Null And fulfillmentStatus <> "" Then
+				rs.Close
+				Return fulfillmentStatus
+			End If
+		End If
+		rs.Close
+	Catch
+		Log("GetOrderDisplayStatus error: " & LastException.Message)
+	End Try
+
+	Return fallbackStatus
 End Sub
 
 ' ======================
@@ -807,11 +1014,10 @@ Private Sub UpdateHistorySummary
 	End If
 	rs.Close
 
-	rs = Main.SQLProducts.ExecQuery2( _
+	rs = Main.SQLProducts.ExecQuery( _
 			"SELECT COUNT(*) AS pending_count " & _
 			"FROM orders " & _
-			"WHERE vendor_id = ? AND user_id = ? AND sync_status = 'Holding'", _
-			Array As String(Main.VENDOR_ID, Main.LoggedInUserID))
+			"WHERE IFNULL(sync_status, '') <> 'Synced'")
 
 	If rs.NextRow Then
 		lblPendingSync.Text = "Pending Sync: " & rs.GetInt("pending_count")
